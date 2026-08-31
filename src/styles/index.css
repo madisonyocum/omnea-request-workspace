@@ -1,0 +1,181 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import 'tailwindcss';
+
+/*
+ * Design tokens transcribed from the Figma variable collection ("Omnea").
+ * Names mirror the Figma paths (brand/600 -> --color-brand-600) so the mapping
+ * back to the source of truth stays obvious.
+ */
+@theme {
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+
+  /* brand */
+  --color-brand-300: #9b8afb;
+  --color-brand-600: #6e56f8;
+  --color-brand-700: #5b45e0;
+
+  /* text */
+  --color-text-primary: #101828;
+  --color-text-secondary: #475467;
+  --color-text-tertiary: #667085;
+  --color-text-muted: #98a2b3;
+  --color-text-disabled: #d0d5dd;
+
+  /* surfaces */
+  --color-surface-card: #ffffff;
+  --color-surface-subtle: #f9fafb;
+  --color-surface-sunken: #f2f4f7;
+  --color-surface-canvas: #f6f7f9;
+  --color-surface-brand-subtle: #f2f0fe;
+  --color-surface-rail: #121317;
+  --color-surface-rail-active: #2e2f33;
+
+  /* borders */
+  --color-border-subtle: #edeff3;
+  --color-border-default: #e7e9ef;
+  --color-border-strong: #d8dce5;
+  --color-border-card: #e9ebf0;
+  --color-border-dashed: #d1d6de;
+  --color-border-mark: #eccf3d;
+
+  /* status */
+  --color-success-50: #e8f8f0;
+  --color-success-300: #8fe3ae;
+  --color-success-500: #12b76a;
+  --color-success-700: #067647;
+  --color-warning-100: #fef0c7;
+  --color-warning-400: #f79009;
+  --color-warning-500: #dc6803;
+  --color-warning-600: #b54708;
+  --color-warning-700: #93370d;
+  --color-danger-100: #fee4e2;
+  --color-danger-500: #f04438;
+  --color-danger-700: #b42318;
+
+  /* accents (avatar palette) */
+  --color-accent-violet: #7a5af8;
+  --color-accent-blue: #2e90fa;
+  --color-accent-yellow: #ffdf3f;
+  --color-neutral-200: #e7e9ef;
+
+  /* radii */
+  --radius-xs: 6px;
+  --radius-sm: 8px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 16px;
+
+  /* elevation */
+  --shadow-chrome: 0 10px 12px rgba(23, 26, 33, 0.05), 0 1px 1px rgba(23, 26, 33, 0.05);
+  --shadow-card: 0 12px 28px -12px rgba(15, 23, 41, 0.08), 0 1px 2px -1px rgba(15, 23, 41, 0.05);
+  --shadow-brand: 0 3px 4px rgba(110, 87, 247, 0.3);
+  --shadow-popover: 0 16px 32px -8px rgba(15, 23, 41, 0.18), 0 2px 6px -2px rgba(15, 23, 41, 0.08);
+}
+
+@layer base {
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+
+  body {
+    background-color: var(--color-surface-canvas);
+    color: var(--color-text-primary);
+    font-family: var(--font-sans);
+    font-feature-settings: 'cv05' 1;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* The design uses tight, single-line type at every size. */
+  button,
+  input,
+  textarea,
+  select {
+    font: inherit;
+    color: inherit;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-brand-600);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+}
+
+@utility scrollbar-slim {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border-strong) transparent;
+
+  &::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background-clip: padding-box;
+    background-color: var(--color-border-strong);
+    border: 3px solid transparent;
+    border-radius: 999px;
+  }
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+}
+
+@keyframes omnea-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes omnea-pop-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes omnea-slide-in-right {
+  from {
+    transform: translateX(16px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes omnea-slide-up {
+  from {
+    transform: translateY(8px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@utility animate-fade-in {
+  animation: omnea-fade-in 160ms ease-out;
+}
+
+@utility animate-pop-in {
+  animation: omnea-pop-in 140ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@utility animate-drawer-in {
+  animation: omnea-slide-in-right 220ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@utility animate-slide-up {
+  animation: omnea-slide-up 200ms cubic-bezier(0.16, 1, 0.3, 1);
+}
