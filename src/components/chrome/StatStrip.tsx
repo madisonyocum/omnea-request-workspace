@@ -15,7 +15,7 @@ export function StatStrip() {
   const stats = statStrip(state);
 
   return (
-    <div className="flex h-[66px] items-center bg-surface-card px-[24px] pb-[12px]">
+    <div className="flex items-center bg-surface-card px-[24px] pb-[20px]">
       {stats.map((stat, index) => (
         <Fragment key={stat.id}>
           {index > 0 && (

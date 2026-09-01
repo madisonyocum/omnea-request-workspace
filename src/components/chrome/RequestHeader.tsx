@@ -26,18 +26,18 @@ export function RequestHeader() {
   const watchers = WATCHER_IDS.map(person);
 
   return (
-    <div className="flex h-[64px] items-center gap-[10px] bg-surface-card px-[24px]">
-      <div className="flex size-[36px] shrink-0 items-center justify-center rounded-md border border-border-mark bg-accent-yellow text-[16px] font-bold text-text-primary">
+    <div className="flex items-center gap-[10px] bg-surface-card px-[24px] pt-[12px] pb-[16px]">
+      <div className="-mt-[5px] flex size-[36px] shrink-0 items-center justify-center rounded-md border border-border-mark bg-accent-yellow text-[16px] font-bold text-text-primary">
         {REQUEST.logoInitial}
       </div>
 
       <div className="flex min-w-0 flex-col gap-[5px]">
-        <div className="flex items-center gap-[8px]">
+        <div className="mt-[3px] flex items-center gap-[8px]">
           <h1 className="text-[16px] font-semibold leading-[1.15] text-text-primary">{REQUEST.supplier}</h1>
-          <span className="text-[12px] font-medium text-text-muted">{REQUEST.reference}</span>
-          <Badge tone="danger">{REQUEST.riskBadge}</Badge>
+          <span className="text-[12px] font-medium whitespace-nowrap text-text-muted">{REQUEST.reference}</span>
+          <Badge tone="danger" size="sm">{REQUEST.riskBadge}</Badge>
         </div>
-        <p className="truncate text-[12px] leading-[1.3] text-text-muted">{REQUEST.subtitle}</p>
+        <p className="mb-[6px] truncate text-[12px] leading-[1.3] text-text-tertiary">{REQUEST.subtitle}</p>
       </div>
 
       <div className="flex-1" />
