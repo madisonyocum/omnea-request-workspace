@@ -25,15 +25,15 @@ function PendingActionCard() {
 
   return (
     <section className="flex h-full min-h-0 w-full flex-col overflow-hidden rounded-lg border border-border-card bg-surface-card shadow-chrome">
-      <div className="flex shrink-0 flex-col gap-[6px] px-[16px] pt-[14px]">
+      <div className="flex shrink-0 flex-col items-start gap-[6px] px-[16px] pt-[14px]">
         <DotPill tone="warning">{action.duePill}</DotPill>
         <h2 className="text-[15px] font-semibold leading-[1.3] text-text-primary">{action.title}</h2>
         <p className="text-[12px] text-text-muted">{action.subtitle}</p>
-        <div className="mt-[2px] h-px w-full bg-border-subtle" />
+        <div className="mt-[6px] h-px w-full bg-border-subtle" />
       </div>
 
-      <div className="scrollbar-slim flex min-h-0 flex-1 flex-col justify-between gap-[10px] overflow-y-auto px-[16px] pb-[12px] pt-[10px]">
-        <div className="flex flex-col gap-[7px]">
+      <div className="scrollbar-slim flex min-h-0 flex-1 flex-col gap-[12px] overflow-y-auto px-[16px] pb-[14px] pt-[12px]">
+        <div className="flex flex-col gap-[8px]">
           {action.checklist.map((item) => (
             <div key={item.id} className="flex items-start gap-[8px]">
               {item.state === 'done' ? (
@@ -57,7 +57,7 @@ function PendingActionCard() {
 
         <div className="h-px w-full bg-border-subtle" />
 
-        <div className="flex flex-col gap-[9px]">
+        <div className="flex flex-col gap-[8px]">
           {action.attachments.map((file) => (
             <button
               key={file}
@@ -73,7 +73,7 @@ function PendingActionCard() {
           ))}
         </div>
 
-        <div className="flex shrink-0 items-start gap-[8px]">
+        <div className="mt-auto flex shrink-0 items-start gap-[8px]">
           <Button size="md" variant="primary" className="flex-1" onClick={() => dispatch({ type: 'action/approve' })}>
             Approve
           </Button>
@@ -97,7 +97,7 @@ function ActionCompleteCard() {
 
   return (
     <section className="flex h-full min-h-0 w-full flex-col overflow-hidden rounded-lg border border-border-card bg-surface-card shadow-chrome">
-      <div className="flex shrink-0 flex-col gap-[6px] px-[16px] pt-[14px]">
+      <div className="flex shrink-0 flex-col items-start gap-[6px] px-[16px] pt-[14px]">
         {outcome === 'declined' ? (
           <DotPill tone="danger">Declined</DotPill>
         ) : (
@@ -113,10 +113,10 @@ function ActionCompleteCard() {
         <p className="text-[12px] text-text-muted">
           {outcome ? 'Recorded 6 Jun, 12:34 · added to the audit trail' : 'You will be notified if that changes.'}
         </p>
-        <div className="mt-[2px] h-px w-full bg-border-subtle" />
+        <div className="mt-[6px] h-px w-full bg-border-subtle" />
       </div>
 
-      <div className="scrollbar-slim flex min-h-0 flex-1 flex-col justify-between gap-[10px] overflow-y-auto px-[16px] pb-[12px] pt-[10px]">
+      <div className="scrollbar-slim flex min-h-0 flex-1 flex-col gap-[12px] overflow-y-auto px-[16px] pb-[14px] pt-[12px]">
         <span className="text-[10px] font-semibold tracking-[0.8px] text-text-muted uppercase">Next up</span>
         {nextStep ? (
           <>

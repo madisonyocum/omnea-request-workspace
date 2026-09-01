@@ -3,6 +3,7 @@ import type {
   Comment,
   DocumentRow,
   DocumentSortKey,
+  AnswerFlag,
   PendingAction,
   TabId,
   WorkflowStage,
@@ -12,6 +13,9 @@ import { INITIAL_COMMENTS, PENDING_ACTION, WORKFLOW_STAGES } from '@/domain/work
 import { INITIAL_TASK_ANSWERS, TASK_FORMS } from '@/domain/tasks';
 import { INITIAL_DOCUMENTS, SUBMISSION_FORMS } from '@/domain/submissions';
 import { person } from '@/domain/people';
+
+/** Which set of forms a flag belongs to — task and submission ids overlap. */
+export type FlagScope = 'task' | 'submission';
 
 export interface Toast {
   id: string;
@@ -32,6 +36,11 @@ export interface WorkspaceState {
   taskAnswers: AnswerMap;
   activeTaskId: string;
   activeSubmissionId: string;
+  /**
+   * Flags raised against answers, keyed by form id within each scope. Task and
+   * submission forms share ids, so the two scopes are held apart.
+   */
+  flags: Record<FlagScope, Record<string, AnswerFlag[]>>;
   documents: DocumentRow[];
   documentSort: { key: DocumentSortKey; direction: 'asc' | 'desc' } | null;
   toasts: Toast[];
@@ -53,6 +62,9 @@ export type WorkspaceAction =
   | { type: 'task/select'; taskId: string }
   | { type: 'task/answer'; questionId: string; optionId: string; multiple: boolean }
   | { type: 'submission/select'; submissionId: string }
+  | { type: 'flag/raise'; scope: FlagScope; formId: string; questionId: string; reason: string; severity: AnswerFlag['severity'] }
+  | { type: 'flag/resolve'; scope: FlagScope; formId: string; flagId: string }
+  | { type: 'flag/reopen'; scope: FlagScope; formId: string; flagId: string }
   | { type: 'document/toggle-store'; documentId: string }
   | { type: 'document/add'; name: string }
   | { type: 'document/remove'; documentId: string }
@@ -72,6 +84,10 @@ export const initialWorkspaceState: WorkspaceState = {
   taskAnswers: INITIAL_TASK_ANSWERS,
   activeTaskId: TASK_FORMS[0].id,
   activeSubmissionId: SUBMISSION_FORMS[0].id,
+  flags: {
+    task: Object.fromEntries(TASK_FORMS.map((form) => [form.id, form.flags ?? []])),
+    submission: Object.fromEntries(SUBMISSION_FORMS.map((form) => [form.id, form.flags ?? []])),
+  },
   documents: INITIAL_DOCUMENTS,
   documentSort: null,
   toasts: [],
@@ -92,6 +108,21 @@ function mapStep(
     if (!stage.steps.some((step) => step.id === stepId)) return stage;
     return { ...stage, steps: stage.steps.map((step) => (step.id === stepId ? update(step) : step)) };
   });
+}
+
+function withFlags(
+  state: WorkspaceState,
+  scope: FlagScope,
+  formId: string,
+  update: (flags: AnswerFlag[]) => AnswerFlag[],
+): WorkspaceState {
+  return {
+    ...state,
+    flags: {
+      ...state.flags,
+      [scope]: { ...state.flags[scope], [formId]: update(state.flags[scope][formId] ?? []) },
+    },
+  };
 }
 
 function withToast(state: WorkspaceState, message: string, tone: Toast['tone'] = 'default'): WorkspaceState {
@@ -300,6 +331,42 @@ export function workspaceReducer(state: WorkspaceState, action: WorkspaceAction)
 
     case 'submission/select':
       return { ...state, activeSubmissionId: action.submissionId };
+
+    case 'flag/raise': {
+      const flag: AnswerFlag = {
+        id: nextId('flag'),
+        questionId: action.questionId,
+        raisedById: 'me',
+        raisedAt: TODAY,
+        reason: action.reason,
+        severity: action.severity,
+      };
+      return withToast(
+        withFlags(state, action.scope, action.formId, (flags) => [...flags, flag]),
+        'Flag raised — Peter Kaminsky has been asked to respond',
+        'success',
+      );
+    }
+
+    case 'flag/resolve':
+    case 'flag/reopen': {
+      const resolving = action.type === 'flag/resolve';
+      return withToast(
+        withFlags(state, action.scope, action.formId, (flags) =>
+          flags.map((flag) =>
+            flag.id === action.flagId
+              ? {
+                  ...flag,
+                  resolved: resolving,
+                  resolution: resolving ? `Resolved ${TODAY} by Alex Green` : undefined,
+                }
+              : flag,
+          ),
+        ),
+        resolving ? 'Flag resolved' : 'Flag reopened',
+        resolving ? 'success' : 'default',
+      );
+    }
 
     case 'document/toggle-store':
       return {

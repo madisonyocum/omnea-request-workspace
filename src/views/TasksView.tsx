@@ -6,16 +6,18 @@ import { DotPill } from '@/components/ui/Pill';
 import { FormHeader, SplitFormCard } from '@/components/forms/SplitFormCard';
 import type { SectionNavGroup } from '@/components/forms/SplitFormCard';
 import { QuestionField } from '@/components/forms/QuestionField';
+import { AnswerFlags, FlagSummary, RaiseFlagModal } from '@/components/forms/AnswerFlags';
+import { flagAnchorId } from '@/lib/flagAnchor';
 import { TASK_FORMS } from '@/domain/tasks';
-import type { QuestionnaireSection, TaskForm } from '@/domain/types';
-import { taskProgress } from '@/state/selectors';
+import type { AnswerFlag, QuestionnaireSection, TaskForm } from '@/domain/types';
+import { formFlags, openFlags, taskProgress } from '@/state/selectors';
 import type { SectionProgress, TaskProgress } from '@/state/selectors';
 import { useWorkspace } from '@/state/workspaceContext';
 
 export function TasksView() {
   const { state, dispatch } = useWorkspace();
   const form = TASK_FORMS.find((candidate) => candidate.id === state.activeTaskId) ?? TASK_FORMS[0];
-  const progress = taskProgress(form, state.taskAnswers);
+  const progress = taskProgress(form, state.taskAnswers, formFlags(state, 'task', form.id));
 
   const navGroups: SectionNavGroup[] = [
     {
@@ -24,14 +26,15 @@ export function TasksView() {
       items: TASK_FORMS.map((task) => {
         const taskDone = taskProgress(task, state.taskAnswers);
         const complete = taskDone.answered === taskDone.total;
+        const flagged = openFlags(state, 'task', task.id).length;
         return {
           id: task.id,
           label: task.name,
           status: {
-            label: complete ? 'Ready to submit' : 'Required',
-            tone: complete ? ('complete' as const) : ('active' as const),
+            label: flagged > 0 ? 'Needs changes' : complete ? 'Ready to submit' : 'Required',
+            tone: flagged > 0 ? ('active' as const) : complete ? ('complete' as const) : ('active' as const),
           },
-          commentCount: task.commentCount,
+          flagCount: flagged,
         };
       }),
     },
@@ -53,6 +56,12 @@ function TaskFormShell({
 }) {
   const { state, dispatch } = useWorkspace();
   const sectionRefs = useRef(new Map<string, HTMLElement>());
+  const [flagging, setFlagging] = useState<string | null>(null);
+  const flags = formFlags(state, 'task', form.id);
+  const open = flags.filter((flag) => !flag.resolved);
+  const questionLabel = (questionId: string) =>
+    form.sections.flatMap((section) => section.questions).find((question) => question.id === questionId)?.label ??
+    questionId;
   /** The first part-answered section opens by default, mirroring the design. */
   const [openSectionId, setOpenSectionId] = useState<string | null>(() => {
     const partial = form.sections.find((section) => {
@@ -74,10 +83,12 @@ function TaskFormShell({
       header={
         <div className="shrink-0">
           <FormHeader title={form.name} subtitle={form.lastEdited} bordered={false}>
-            <DotPill tone="warning">
-              {form.dueLabel}
-              {flaggedTotal > 0 && ` · ${flaggedTotal} flagged`}
-            </DotPill>
+            {flaggedTotal > 0 && (
+              <DotPill tone="warning">
+                {flaggedTotal} {flaggedTotal === 1 ? 'flag' : 'flags'} open
+              </DotPill>
+            )}
+            <DotPill tone="muted">{form.dueLabel}</DotPill>
             <Button
               size="md"
               onClick={() => {
@@ -113,6 +124,31 @@ function TaskFormShell({
         </div>
       }
     >
+      {open.length > 0 && (
+        <div className="px-[28px] pb-[4px] pt-[16px]">
+          <FlagSummary
+            flags={open}
+            questionLabel={questionLabel}
+            note={`${form.name} cannot be submitted until these answers are updated.`}
+            actionLabel="Send back"
+            onRequestUpdates={() =>
+              dispatch({
+                type: 'toast/show',
+                message: `${open.length} flagged ${open.length === 1 ? 'answer' : 'answers'} sent back to Peter Kaminsky`,
+                tone: 'success',
+              })
+            }
+            onJump={(questionId) => {
+              /* Open the section holding the answer before scrolling to it. */
+              const owner = form.sections.find((section) =>
+                section.questions.some((question) => question.id === questionId),
+              );
+              if (owner) setOpenSectionId(owner.id);
+            }}
+          />
+        </div>
+      )}
+
       {form.sections.map((section) => (
         <SectionRow
           key={section.id}
@@ -121,15 +157,36 @@ function TaskFormShell({
           open={openSectionId === section.id}
           onToggle={() => setOpenSectionId((current) => (current === section.id ? null : section.id))}
           answers={state.taskAnswers}
+          flags={flags}
           onAnswer={(questionId, optionId, multiple) =>
             dispatch({ type: 'task/answer', questionId, optionId, multiple })
           }
+          onFlag={setFlagging}
+          onResolve={(flagId) => dispatch({ type: 'flag/resolve', scope: 'task', formId: form.id, flagId })}
+          onReopen={(flagId) => dispatch({ type: 'flag/reopen', scope: 'task', formId: form.id, flagId })}
           registerRef={(element) => {
             if (element) sectionRefs.current.set(section.id, element);
             else sectionRefs.current.delete(section.id);
           }}
         />
       ))}
+
+      {flagging && (
+        <RaiseFlagModal
+          questionLabel={questionLabel(flagging)}
+          onClose={() => setFlagging(null)}
+          onSubmit={(reason, severity: AnswerFlag['severity']) =>
+            dispatch({
+              type: 'flag/raise',
+              scope: 'task',
+              formId: form.id,
+              questionId: flagging,
+              reason,
+              severity,
+            })
+          }
+        />
+      )}
     </SplitFormCard>
   );
 }
@@ -140,7 +197,11 @@ function SectionRow({
   open,
   onToggle,
   answers,
+  flags,
   onAnswer,
+  onFlag,
+  onResolve,
+  onReopen,
   registerRef,
 }: {
   section: QuestionnaireSection;
@@ -148,7 +209,11 @@ function SectionRow({
   open: boolean;
   onToggle: () => void;
   answers: Record<string, string[]>;
+  flags: AnswerFlag[];
   onAnswer: (questionId: string, optionId: string, multiple: boolean) => void;
+  onFlag: (questionId: string) => void;
+  onResolve: (flagId: string) => void;
+  onReopen: (flagId: string) => void;
   registerRef: (element: HTMLElement | null) => void;
 }) {
   return (
@@ -182,13 +247,22 @@ function SectionRow({
       {open && (
         <div className="animate-fade-in flex flex-col pb-[12px] pl-[72px] pr-[28px] pt-[4px]">
           {section.questions.map((question, index) => (
-            <QuestionField
-              key={question.id}
-              question={question}
-              answer={answers[question.id] ?? []}
-              onSelect={(optionId) => onAnswer(question.id, optionId, question.kind === 'checkbox')}
-              className={index < section.questions.length - 1 ? 'border-b border-border-subtle' : undefined}
-            />
+            <div key={question.id} id={flagAnchorId(question.id)}>
+              <QuestionField
+                question={question}
+                answer={answers[question.id] ?? []}
+                onSelect={(optionId) => onAnswer(question.id, optionId, question.kind === 'checkbox')}
+                className={index < section.questions.length - 1 ? 'border-b border-border-subtle' : undefined}
+                footer={
+                  <AnswerFlags
+                    flags={flags.filter((flag) => flag.questionId === question.id)}
+                    onResolve={onResolve}
+                    onReopen={onReopen}
+                  />
+                }
+                actions={[{ id: 'flag', label: 'Flag this answer', onSelect: () => onFlag(question.id) }]}
+              />
+            </div>
           ))}
         </div>
       )}

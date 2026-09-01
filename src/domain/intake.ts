@@ -161,4 +161,6 @@ export const INTAKE_GROUPS: IntakeGroup[] = [
 export const INTAKE_META = {
   title: 'Intake - New purchase',
   subtitle: 'Submitted 24 May by Ben Williams',
+  lastEditedAt: '27 May',
+  lastEditedById: 'ben',
 };

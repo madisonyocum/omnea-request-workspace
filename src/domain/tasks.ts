@@ -9,6 +9,24 @@ export const TASK_FORMS: TaskForm[] = [
   {
     id: 'security',
     name: 'Security',
+    flags: [
+      {
+        id: 'task-flag-sec-1',
+        questionId: 'pen-2',
+        raisedById: 'sadie',
+        raisedAt: '11 Sep',
+        reason: 'A test older than 24 months does not meet the policy. Book one before this goes to security review.',
+        severity: 'blocker',
+      },
+      {
+        id: 'task-flag-sec-2',
+        questionId: 'dh-4',
+        raisedById: 'amir',
+        raisedAt: '12 Sep',
+        reason: 'Sub-processors are named as yes but not listed. Add the full list before submitting.',
+        severity: 'query',
+      },
+    ],
     status: 'required',
     dueLabel: 'Due 17 Sep',
     lastEdited: 'Last edited 10 Sep by Peter Kaminsky',
@@ -128,7 +146,6 @@ export const TASK_FORMS: TaskForm[] = [
             label: 'Do you use sub-processors that access ACME data?',
             kind: 'radio',
             options: yesNo,
-            flagged: true,
           },
           { id: 'dh-5', label: 'Can ACME data be exported on request in a machine readable format?', kind: 'radio', options: yesNo },
           {
@@ -228,8 +245,25 @@ export const TASK_FORMS: TaskForm[] = [
   {
     id: 'incident-management',
     name: 'Incident management',
+    flags: [
+      {
+        id: 'task-flag-im-1',
+        questionId: 'im-2',
+        raisedById: 'amir',
+        raisedAt: '10 Sep',
+        reason: '72 hours does not meet our 24 hour contractual notification requirement.',
+        severity: 'blocker',
+      },
+      {
+        id: 'task-flag-im-2',
+        questionId: 'im-4',
+        raisedById: 'sadie',
+        raisedAt: '10 Sep',
+        reason: 'Attach the post-incident review for the March 2023 incident.',
+        severity: 'query',
+      },
+    ],
     status: 'required',
-    commentCount: 2,
     dueLabel: 'Due 17 Sep',
     lastEdited: 'Last edited 9 Sep by Peter Kaminsky',
     sections: [
@@ -284,7 +318,7 @@ export const INITIAL_TASK_ANSWERS: AnswerMap = {
   'pen-1': ['yes'],
   'pen-2': ['gt24'],
   'pen-3': ['no'],
-  // Security · Data handling — complete, one flagged answer
+  // Security · Data handling — complete, one answer flagged by the DPO
   'dh-1': ['yes'],
   'dh-2': ['yes'],
   'dh-3': ['us', 'eu'],

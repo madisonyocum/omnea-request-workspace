@@ -93,8 +93,41 @@ export const SUBMISSION_FORMS: SubmissionForm[] = [
     name: 'Security',
     group: 'Supplier assessment',
     status: 'submitted',
-    commentCount: 4,
     lastEdited: 'Last edited 10 Sep by Peter Kaminsky',
+    flags: [
+      {
+        id: 'flag-sec-1',
+        questionId: 'sec-certs',
+        raisedById: 'sadie',
+        raisedAt: '11 Sep',
+        reason: 'SOC 2 report is from Nov 2023 — outside our 12 month window. Ask for the current period report.',
+        severity: 'blocker',
+      },
+      {
+        id: 'flag-sec-2',
+        questionId: 'sec-pen',
+        raisedById: 'sadie',
+        raisedAt: '11 Sep',
+        reason: 'Last penetration test was over 24 months ago. Policy requires one within the last 12 months.',
+        severity: 'blocker',
+      },
+      {
+        id: 'flag-sec-3',
+        questionId: 'sec-pen',
+        raisedById: 'sam',
+        raisedAt: '12 Sep',
+        reason: 'No remediation evidence attached for the findings of that test.',
+        severity: 'query',
+      },
+      {
+        id: 'flag-sec-4',
+        questionId: 'sec-subprocessors',
+        raisedById: 'amir',
+        raisedAt: '12 Sep',
+        reason: 'All three sub-processors are US hosted. Confirm the transfer mechanism for EU personal data.',
+        severity: 'query',
+      },
+    ],
     questions: [
       {
         id: 'sec-certs',
@@ -147,8 +180,25 @@ export const SUBMISSION_FORMS: SubmissionForm[] = [
     name: 'Incident management',
     group: 'Supplier assessment',
     status: 'submitted',
-    commentCount: 2,
     lastEdited: 'Last edited 9 Sep by Peter Kaminsky',
+    flags: [
+      {
+        id: 'flag-im-1',
+        questionId: 'im-notify',
+        raisedById: 'amir',
+        raisedAt: '10 Sep',
+        reason: '72 hours does not meet our 24 hour contractual notification requirement.',
+        severity: 'blocker',
+      },
+      {
+        id: 'flag-im-2',
+        questionId: 'im-history',
+        raisedById: 'sadie',
+        raisedAt: '10 Sep',
+        reason: 'Post-incident review is referenced but was not attached to the submission.',
+        severity: 'query',
+      },
+    ],
     questions: [
       {
         id: 'im-notify',

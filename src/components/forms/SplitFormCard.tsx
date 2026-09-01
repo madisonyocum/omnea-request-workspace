@@ -1,4 +1,4 @@
-import { MessageSquare } from 'lucide-react';
+import { Flag } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { cn } from '@/lib/cn';
 
@@ -6,7 +6,8 @@ export interface SectionNavItem {
   id: string;
   label: string;
   status?: { label: string; tone: 'active' | 'pending' | 'complete' };
-  commentCount?: number;
+  /** Open issues raised against this section's answers. */
+  flagCount?: number;
 }
 
 export interface SectionNavGroup {
@@ -91,10 +92,13 @@ export function SplitFormCard({
                       </span>
                     )}
                   </span>
-                  {item.commentCount !== undefined && (
-                    <span className="flex shrink-0 items-center gap-[3px] rounded-xs bg-surface-sunken px-[5px] py-[3px]">
-                      <MessageSquare className="size-[10px] text-text-tertiary" strokeWidth={2} />
-                      <span className="text-[9px] font-semibold text-text-tertiary">{item.commentCount}</span>
+                  {item.flagCount !== undefined && item.flagCount > 0 && (
+                    <span
+                      title={`${item.flagCount} open ${item.flagCount === 1 ? 'flag' : 'flags'}`}
+                      className="flex shrink-0 items-center gap-[3px] rounded-xs bg-warning-100 px-[5px] py-[3px]"
+                    >
+                      <Flag className="size-[10px] text-warning-700" strokeWidth={2} />
+                      <span className="text-[9px] font-semibold text-warning-700">{item.flagCount}</span>
                     </span>
                   )}
                 </button>
@@ -122,7 +126,7 @@ export function FormHeader({
   bordered = true,
 }: {
   title: string;
-  subtitle?: string;
+  subtitle?: ReactNode;
   children?: ReactNode;
   bordered?: boolean;
 }) {
@@ -135,7 +139,7 @@ export function FormHeader({
     >
       <div className="flex min-w-0 flex-1 flex-col gap-[4px]">
         <h2 className="truncate text-[16px] font-semibold text-text-primary">{title}</h2>
-        {subtitle && <p className="truncate text-[11px] text-text-muted">{subtitle}</p>}
+        {subtitle && <div className="truncate text-[11px] text-text-muted">{subtitle}</div>}
       </div>
       {children}
     </header>

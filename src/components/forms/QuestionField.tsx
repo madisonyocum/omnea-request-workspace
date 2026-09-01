@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { ChevronDown, MoreVertical } from 'lucide-react';
 import { cn } from '@/lib/cn';
 import { CheckboxChoice, RadioChoice } from '@/components/ui/Choice';
@@ -12,6 +13,8 @@ interface QuestionFieldProps {
   onSelect?: (optionId: string) => void;
   /** Renders the row-level "…" menu shown on some fields in the design. */
   actions?: { id: string; label: string; onSelect?: () => void }[];
+  /** Rendered under the answer — used for flags raised against it. */
+  footer?: ReactNode;
   className?: string;
 }
 
@@ -21,6 +24,7 @@ export function QuestionField({
   readOnly = false,
   onSelect,
   actions,
+  footer,
   className,
 }: QuestionFieldProps) {
   return (
@@ -50,6 +54,8 @@ export function QuestionField({
       </div>
 
       <QuestionControl question={question} answer={answer} readOnly={readOnly} onSelect={onSelect} />
+
+      {footer}
     </div>
   );
 }

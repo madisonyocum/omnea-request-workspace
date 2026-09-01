@@ -1,10 +1,14 @@
+import { useState } from 'react';
 import { Clock } from 'lucide-react';
 import { DotPill } from '@/components/ui/Pill';
 import { FormHeader, SplitFormCard } from '@/components/forms/SplitFormCard';
 import type { SectionNavGroup } from '@/components/forms/SplitFormCard';
 import { QuestionField } from '@/components/forms/QuestionField';
+import { AnswerFlags, FlagSummary, RaiseFlagModal } from '@/components/forms/AnswerFlags';
+import { flagAnchorId } from '@/lib/flagAnchor';
 import { SUBMISSION_FORMS } from '@/domain/submissions';
-import type { SubmissionForm } from '@/domain/types';
+import type { AnswerFlag, SubmissionForm } from '@/domain/types';
+import { formFlags, openFlags } from '@/state/selectors';
 import { useWorkspace } from '@/state/workspaceContext';
 
 const GROUP_ORDER = ['Supplier assessment', 'Engagement'] as const;
@@ -24,9 +28,12 @@ export function SubmissionsView() {
         label: candidate.status === 'submitted' ? 'Submitted' : 'Pending',
         tone: candidate.status === 'submitted' ? ('complete' as const) : ('pending' as const),
       },
-      commentCount: candidate.commentCount,
+      flagCount: openFlags(state, 'submission', candidate.id).length,
     })),
   }));
+
+  const open = openFlags(state, 'submission', form.id);
+  const raised = formFlags(state, 'submission', form.id);
 
   return (
     <SplitFormCard
@@ -35,6 +42,12 @@ export function SubmissionsView() {
       onSelect={(submissionId) => dispatch({ type: 'submission/select', submissionId })}
       header={
         <FormHeader title={form.name} subtitle={form.lastEdited ?? `${form.group} · not yet requested`}>
+          {open.length > 0 && (
+            <DotPill tone="warning">
+              {open.length} {open.length === 1 ? 'flag' : 'flags'} open
+            </DotPill>
+          )}
+          {open.length === 0 && raised.length > 0 && <DotPill tone="success">All flags resolved</DotPill>}
           {form.status === 'submitted' ? (
             <DotPill tone="success">Submitted</DotPill>
           ) : (
@@ -49,22 +62,59 @@ export function SubmissionsView() {
 }
 
 function SubmissionBody({ form }: { form: SubmissionForm }) {
-  const { dispatch } = useWorkspace();
+  const { state, dispatch } = useWorkspace();
+  const [flagging, setFlagging] = useState<string | null>(null);
+
+  const flags = formFlags(state, 'submission', form.id);
+  const open = flags.filter((flag) => !flag.resolved);
+  const flagsFor = (questionId: string) => flags.filter((flag) => flag.questionId === questionId);
+  const questionLabel = (questionId: string) =>
+    /* Strip the "1. " prefix — the summary reads better without it. */
+    (form.questions.find((question) => question.id === questionId)?.label ?? questionId).replace(/^\d+\.\s*/, '');
+
+  if (form.status === 'pending') return <PendingState formName={form.name} />;
 
   return (
-    <>
-      {form.status === 'pending' ? (
-        <PendingState formName={form.name} />
-      ) : (
-        <div className="flex flex-col px-[28px] pb-[20px] pt-[4px]">
-          {form.questions.map((question, index) => (
+    <div className="flex flex-col px-[28px] pb-[20px] pt-[4px]">
+      {open.length > 0 && (
+        <div className="pb-[6px] pt-[14px]">
+          <FlagSummary
+            flags={open}
+            questionLabel={questionLabel}
+            note={`${form.name} cannot be signed off until Mailchimp updates these answers.`}
+            onRequestUpdates={() =>
+              dispatch({
+                type: 'toast/show',
+                message: `Update requested from Peter Kaminsky on ${open.length} flagged ${open.length === 1 ? 'answer' : 'answers'}`,
+                tone: 'success',
+              })
+            }
+          />
+        </div>
+      )}
+
+      {form.questions.map((question, index) => {
+        const questionFlags = flagsFor(question.id);
+        return (
+          <div key={question.id} id={flagAnchorId(question.id)}>
             <QuestionField
-              key={question.id}
               question={question}
               answer={question.value ? [question.value] : []}
               readOnly
               className={index < form.questions.length - 1 ? 'border-b border-border-subtle' : undefined}
+              footer={
+                <AnswerFlags
+                  flags={questionFlags}
+                  onResolve={(flagId) => dispatch({ type: 'flag/resolve', scope: 'submission', formId: form.id, flagId })}
+                  onReopen={(flagId) => dispatch({ type: 'flag/reopen', scope: 'submission', formId: form.id, flagId })}
+                />
+              }
               actions={[
+                {
+                  id: 'flag',
+                  label: 'Flag this answer',
+                  onSelect: () => setFlagging(question.id),
+                },
                 {
                   id: 'comment',
                   label: 'Comment on answer',
@@ -83,10 +133,27 @@ function SubmissionBody({ form }: { form: SubmissionForm }) {
                 },
               ]}
             />
-          ))}
-        </div>
+          </div>
+        );
+      })}
+
+      {flagging && (
+        <RaiseFlagModal
+          questionLabel={questionLabel(flagging)}
+          onClose={() => setFlagging(null)}
+          onSubmit={(reason, severity: AnswerFlag['severity']) =>
+            dispatch({
+              type: 'flag/raise',
+              scope: 'submission',
+              formId: form.id,
+              questionId: flagging,
+              reason,
+              severity,
+            })
+          }
+        />
       )}
-    </>
+    </div>
   );
 }
 

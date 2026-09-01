@@ -1,9 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
-import { DotPill } from '@/components/ui/Pill';
+import { MessageSquarePlus, Pencil } from 'lucide-react';
+import { Button } from '@/components/ui/Button';
 import { FormHeader, SplitFormCard } from '@/components/forms/SplitFormCard';
 import type { SectionNavGroup } from '@/components/forms/SplitFormCard';
 import { QuestionField } from '@/components/forms/QuestionField';
 import { INTAKE_GROUPS, INTAKE_META } from '@/domain/intake';
+import { person } from '@/domain/people';
 import { useWorkspace } from '@/state/workspaceContext';
 
 export function IntakeView() {
@@ -48,10 +50,34 @@ export function IntakeView() {
       onSelect={scrollToGroup}
       bodyRef={setScrollRoot}
       header={
-        <FormHeader title={INTAKE_META.title} subtitle={INTAKE_META.subtitle}>
-          <DotPill tone="muted" dot={false}>
-            Read only
-          </DotPill>
+        <FormHeader
+          title={INTAKE_META.title}
+          subtitle={
+            <>
+              Last edited:{' '}
+              <span className="font-semibold text-text-secondary">
+                {INTAKE_META.lastEditedAt} by {person(INTAKE_META.lastEditedById).name}
+              </span>
+            </>
+          }
+        >
+          <div className="flex shrink-0 items-center gap-[8px]">
+            <Button
+              size="md"
+              variant="primary"
+              icon={<Pencil className="size-[13px]" strokeWidth={1.9} />}
+              onClick={() => dispatch({ type: 'toast/show', message: 'Intake form unlocked for editing' })}
+            >
+              Edit form
+            </Button>
+            <Button
+              size="md"
+              icon={<MessageSquarePlus className="size-[14px]" strokeWidth={1.8} />}
+              onClick={() => dispatch({ type: 'toast/show', message: 'Comment thread opened on the intake form' })}
+            >
+              Add comment
+            </Button>
+          </div>
         </FormHeader>
       }
     >

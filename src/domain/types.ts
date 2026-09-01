@@ -104,6 +104,24 @@ export interface PendingAction {
 
 /* ------------------------------------------------------------------- forms */
 
+/**
+ * An issue a reviewer raised against one answer, on a task or a submission.
+ * Flags are what the count badges on the section lists refer to.
+ */
+export interface AnswerFlag {
+  id: string;
+  /** Answer the flag was raised against. */
+  questionId: string;
+  raisedById: string;
+  raisedAt: string;
+  /** What is wrong with the answer, in the reviewer's words. */
+  reason: string;
+  severity: 'blocker' | 'query';
+  resolved?: boolean;
+  /** Set when the flag is resolved, e.g. "Resolved 6 Jun by Alex Green". */
+  resolution?: string;
+}
+
 export type QuestionKind = 'radio' | 'checkbox' | 'text' | 'longtext' | 'select' | 'chips';
 
 export interface QuestionOption {
@@ -123,7 +141,6 @@ export interface Question {
   layout?: 'row' | 'column';
   /** Sub-fields for grouped inputs (address, contact). */
   fields?: { label: string; value: string; halfWidth?: boolean }[];
-  flagged?: boolean;
 }
 
 export interface QuestionnaireSection {
@@ -138,9 +155,10 @@ export interface TaskForm {
   id: string;
   name: string;
   status: TaskSectionStatus;
-  commentCount?: number;
   dueLabel: string;
   lastEdited: string;
+  /** Issues raised against this task's answers. */
+  flags?: AnswerFlag[];
   sections: QuestionnaireSection[];
 }
 
@@ -166,7 +184,8 @@ export interface SubmissionForm {
   name: string;
   group: 'Supplier assessment' | 'Engagement';
   status: SubmissionStatus;
-  commentCount?: number;
+  /** Issues raised against this form's answers. */
+  flags?: AnswerFlag[];
   lastEdited?: string;
   questions: Question[];
 }

@@ -1,6 +1,7 @@
 import type {
   AnswerMap,
   DocumentRow,
+  AnswerFlag,
   StatItem,
   TaskForm,
   WorkflowStage,
@@ -10,7 +11,7 @@ import { STAT_STRIP } from '@/domain/workflow';
 import { SUBMISSION_FORMS } from '@/domain/submissions';
 import { TASK_FORMS } from '@/domain/tasks';
 import { person } from '@/domain/people';
-import type { WorkspaceState } from './workspaceReducer';
+import type { FlagScope, WorkspaceState } from './workspaceReducer';
 
 /** Steps the request is genuinely blocked on right now. */
 export function runningSteps(stages: WorkflowStage[]): WorkflowStep[] {
@@ -67,8 +68,9 @@ export interface TaskProgress {
   sections: Record<string, SectionProgress>;
 }
 
-export function taskProgress(form: TaskForm, answers: AnswerMap): TaskProgress {
+export function taskProgress(form: TaskForm, answers: AnswerMap, flags: AnswerFlag[] = []): TaskProgress {
   const sections: Record<string, SectionProgress> = {};
+  const flaggedQuestions = new Set(flags.filter((flag) => !flag.resolved).map((flag) => flag.questionId));
   let answered = 0;
   let total = 0;
 
@@ -77,10 +79,8 @@ export function taskProgress(form: TaskForm, answers: AnswerMap): TaskProgress {
     let flagged = 0;
     for (const question of section.questions) {
       const value = answers[question.id];
-      if (value && value.length > 0) {
-        sectionAnswered += 1;
-        if (question.flagged) flagged += 1;
-      }
+      if (value && value.length > 0) sectionAnswered += 1;
+      if (flaggedQuestions.has(question.id)) flagged += 1;
     }
     sections[section.id] = { answered: sectionAnswered, total: section.questions.length, flagged };
     answered += sectionAnswered;
@@ -103,25 +103,34 @@ export function sortDocuments(
   });
 }
 
+/** Every flag raised against one form's answers, resolved ones included. */
+export function formFlags(state: WorkspaceState, scope: FlagScope, formId: string): AnswerFlag[] {
+  return state.flags[scope][formId] ?? [];
+}
+
+/** Unresolved flags raised against one form's answers. */
+export function openFlags(state: WorkspaceState, scope: FlagScope, formId: string): AnswerFlag[] {
+  return formFlags(state, scope, formId).filter((flag) => !flag.resolved);
+}
+
 /**
- * Tab badges are derived from what each tab actually shows, so the numbers add
- * up against the content: tasks still to finish, open comments across the
- * submitted forms, and rows in the documents table.
+ * Tab badges count rows the tab actually lists, so a badge always matches what
+ * you see on opening it: tasks with work left, submitted forms carrying open
+ * flags, and rows in the documents table.
  */
 export function tabCounts(state: WorkspaceState) {
   const openTasks = TASK_FORMS.filter((form) => {
     const progress = taskProgress(form, state.taskAnswers);
-    return progress.answered < progress.total;
+    return progress.answered < progress.total || openFlags(state, 'task', form.id).length > 0;
   }).length;
 
-  const submissionComments = SUBMISSION_FORMS.reduce(
-    (total, form) => total + (form.commentCount ?? 0),
-    0,
-  );
+  const flaggedSubmissions = SUBMISSION_FORMS.filter(
+    (form) => openFlags(state, 'submission', form.id).length > 0,
+  ).length;
 
   return {
     tasks: openTasks,
-    submissions: submissionComments,
+    submissions: flaggedSubmissions,
     documents: state.documents.length,
   };
 }
