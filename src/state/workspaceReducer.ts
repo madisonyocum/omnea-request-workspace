@@ -29,9 +29,7 @@ export interface WorkspaceState {
   following: boolean;
   stages: WorkflowStage[];
   comments: Comment[];
-  pendingAction: PendingAction | null;
-  /** Set once the signed-in user has actioned the pending approval. */
-  actionOutcome: 'approved' | 'declined' | null;
+  pendingAction: PendingAction;
   selectedStepId: string | null;
   taskAnswers: AnswerMap;
   activeTaskId: string;
@@ -54,8 +52,6 @@ export type WorkspaceAction =
   | { type: 'step/close' }
   | { type: 'step/remind'; stepId: string }
   | { type: 'step/reassign'; stepId: string; assigneeId: string }
-  | { type: 'action/approve' }
-  | { type: 'action/decline'; reason: string }
   | { type: 'comment/add'; body: string }
   | { type: 'comment/reply'; commentId: string; body: string }
   | { type: 'comment/toggle-resolved'; commentId: string }
@@ -79,7 +75,6 @@ export const initialWorkspaceState: WorkspaceState = {
   stages: WORKFLOW_STAGES,
   comments: INITIAL_COMMENTS,
   pendingAction: PENDING_ACTION,
-  actionOutcome: null,
   selectedStepId: null,
   taskAnswers: INITIAL_TASK_ANSWERS,
   activeTaskId: TASK_FORMS[0].id,
@@ -198,78 +193,6 @@ export function workspaceReducer(state: WorkspaceState, action: WorkspaceAction)
         },
         `${step.name} reassigned`,
         'success',
-      );
-    }
-
-    case 'action/approve': {
-      if (!state.pendingAction) return state;
-      const { stepId } = state.pendingAction;
-      return withToast(
-        {
-          ...state,
-          actionOutcome: 'approved',
-          pendingAction: null,
-          selectedStepId: null,
-          stages: mapStep(state.stages, stepId, (step) => ({
-            ...step,
-            status: 'complete',
-            caption: `Approved ${TODAY}`,
-            pill: undefined,
-            meta: { icon: 'check', label: 'Approved by you' },
-            artefact: { label: 'Approval record' },
-            detail: {
-              ...step.detail,
-              slaLabel: `Completed ${TODAY} · SLA 2 days`,
-              history: [
-                ...step.detail.history,
-                { at: `${TODAY}, 12:34`, label: 'Approved', actor: 'Alex Green' },
-              ],
-            },
-            actions: ['open-form'],
-          })),
-        },
-        'Budget approval recorded',
-        'success',
-      );
-    }
-
-    case 'action/decline': {
-      if (!state.pendingAction) return state;
-      const { stepId } = state.pendingAction;
-      const comment: Comment = {
-        id: nextId('comment'),
-        authorId: 'me',
-        timestamp: 'Just now',
-        body: `Declined budget approval — ${action.reason}`,
-        replies: [],
-      };
-      return withToast(
-        {
-          ...state,
-          actionOutcome: 'declined',
-          pendingAction: null,
-          selectedStepId: null,
-          comments: [comment, ...state.comments],
-          stages: mapStep(state.stages, stepId, (step) => ({
-            ...step,
-            status: 'declined',
-            caption: `Declined ${TODAY}`,
-            pill: { label: 'returned', tone: 'danger' },
-            meta: { icon: 'x', label: 'Returned to requester' },
-            artefact: { label: 'Decline reason' },
-            detail: {
-              ...step.detail,
-              slaLabel: `Declined ${TODAY} · returned to requester`,
-              history: [
-                ...step.detail.history,
-                { at: `${TODAY}, 12:34`, label: `Declined — ${action.reason}`, actor: 'Alex Green' },
-              ],
-            },
-            actions: [],
-          })),
-        },
-        'Budget approval declined and returned',
-        'danger',
       );
     }
 
