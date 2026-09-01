@@ -19,9 +19,9 @@ export function AppRail() {
   return (
     <nav
       aria-label="Product navigation"
-      className="flex w-[56px] shrink-0 flex-col items-center gap-[8px] bg-surface-rail px-[12px] pb-[16px] pt-[12px]"
+      className="flex w-[56px] shrink-0 flex-col items-center gap-[8px] border-r border-border-default bg-surface-card px-[12px] pb-[16px] pt-[12px]"
     >
-      <div className="flex size-[32px] shrink-0 items-center justify-center rounded-[9px] bg-brand-600 text-[18px] font-bold leading-none text-white">
+      <div className="flex size-[32px] shrink-0 items-center justify-center rounded-[9px] bg-text-primary text-[18px] font-bold leading-none text-white">
         O
       </div>
       <div className="h-[16px] shrink-0" />
@@ -37,8 +37,8 @@ export function AppRail() {
               className={cn(
                 'flex size-[36px] cursor-pointer items-center justify-center rounded-md transition-colors duration-150',
                 active
-                  ? 'bg-surface-rail-active text-white'
-                  : 'text-text-muted hover:bg-surface-rail-active/60 hover:text-white',
+                  ? 'bg-surface-brand-subtle text-brand-600'
+                  : 'text-text-tertiary hover:bg-surface-sunken hover:text-text-secondary',
               )}
             >
               <Icon className="size-[18px]" strokeWidth={1.7} />

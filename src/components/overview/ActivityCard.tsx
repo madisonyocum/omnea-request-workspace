@@ -18,7 +18,7 @@ export function ActivityCard() {
     setOpenThreads((current) => (current.includes(id) ? current.filter((v) => v !== id) : [...current, id]));
 
   return (
-    <section className="flex h-full min-h-0 flex-col rounded-lg border border-border-card bg-surface-card shadow-chrome">
+    <section className="flex h-full min-h-0 flex-col rounded-lg border border-border-card bg-surface-card">
       <header className="flex shrink-0 items-center gap-[8px] px-[24px] pt-[16px]">
         <h2 className="text-[16px] font-semibold text-text-primary">Activity</h2>
         <div className="flex-1" />

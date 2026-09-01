@@ -52,7 +52,7 @@ export function DocumentsView() {
   };
 
   return (
-    <section className="flex h-full min-h-0 flex-col overflow-hidden rounded-lg border border-border-card bg-surface-card shadow-chrome">
+    <section className="flex h-full min-h-0 flex-col overflow-hidden rounded-lg border border-border-card bg-surface-card">
       <div className="flex shrink-0 flex-col gap-[10px] px-[24px] pb-[18px] pt-[20px]">
         <div className="flex items-start justify-between">
           <h2 className="text-[16px] font-semibold text-text-primary">Documents</h2>

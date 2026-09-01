@@ -11,7 +11,7 @@ export function WorkflowTimeline({ onArtefact }: { onArtefact: (stepId: string) 
   const completedStages = state.stages.filter((stage) => stage.status === 'complete').length;
 
   return (
-    <section className="rounded-xl border border-border-subtle bg-surface-card px-[20px] pb-[14px] pt-[18px] shadow-card">
+    <section className="rounded-xl border border-border-subtle bg-surface-card px-[20px] pb-[14px] pt-[18px]">
       <header className="flex h-[24px] items-center gap-[10px]">
         <h2 className="text-[16px] font-semibold text-text-primary">Workflow</h2>
         <Badge tone="subtle">{WORKFLOW_META.type.toUpperCase()}</Badge>

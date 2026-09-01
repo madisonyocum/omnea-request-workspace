@@ -21,6 +21,8 @@ export type StepMetaIcon = 'doc' | 'bell' | 'clock' | 'arrow' | 'check' | 'x';
 export interface StepMeta {
   icon: StepMetaIcon;
   label: string;
+  /** "warning" draws attention to a chase, e.g. a reminder already sent. */
+  tone?: 'default' | 'warning';
 }
 
 export interface StepArtefact {

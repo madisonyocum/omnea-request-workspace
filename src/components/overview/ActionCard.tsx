@@ -24,7 +24,7 @@ function PendingActionCard() {
   const action = state.pendingAction!;
 
   return (
-    <section className="flex h-full min-h-0 w-full flex-col overflow-hidden rounded-lg border border-border-card bg-surface-card shadow-chrome">
+    <section className="flex h-full min-h-0 w-full flex-col overflow-hidden rounded-lg border border-border-card bg-surface-card">
       <div className="flex shrink-0 flex-col items-start gap-[6px] px-[16px] pt-[14px]">
         <DotPill tone="warning">{action.duePill}</DotPill>
         <h2 className="text-[15px] font-semibold leading-[1.3] text-text-primary">{action.title}</h2>
@@ -73,12 +73,22 @@ function PendingActionCard() {
           ))}
         </div>
 
-        <div className="mt-auto flex shrink-0 items-start gap-[8px]">
-          <Button size="md" variant="primary" className="flex-1" onClick={() => dispatch({ type: 'action/approve' })}>
-            Approve
-          </Button>
-          <Button size="md" className="flex-1" onClick={() => setDeclineOpen(true)}>
-            Decline
+        <div className="mt-auto flex shrink-0 flex-col gap-[8px]">
+          <div className="flex items-start gap-[8px]">
+            <Button size="md" className="flex-1" onClick={() => dispatch({ type: 'action/approve' })}>
+              Approve
+            </Button>
+            <Button size="md" className="flex-1" onClick={() => setDeclineOpen(true)}>
+              Decline
+            </Button>
+          </div>
+          <Button
+            size="md"
+            variant="primary"
+            className="w-full"
+            onClick={() => dispatch({ type: 'step/remind', stepId: action.stepId })}
+          >
+            Send reminder
           </Button>
         </div>
       </div>
@@ -96,7 +106,7 @@ function ActionCompleteCard() {
   const nextStep = blocking[0];
 
   return (
-    <section className="flex h-full min-h-0 w-full flex-col overflow-hidden rounded-lg border border-border-card bg-surface-card shadow-chrome">
+    <section className="flex h-full min-h-0 w-full flex-col overflow-hidden rounded-lg border border-border-card bg-surface-card">
       <div className="flex shrink-0 flex-col items-start gap-[6px] px-[16px] pt-[14px]">
         {outcome === 'declined' ? (
           <DotPill tone="danger">Declined</DotPill>

@@ -43,7 +43,7 @@ export function SplitFormCard({
   bodyRef?: (element: HTMLDivElement | null) => void;
 }) {
   return (
-    <div className="flex h-full min-h-0 items-stretch overflow-hidden rounded-lg border border-border-card bg-surface-card shadow-chrome">
+    <div className="flex h-full min-h-0 items-stretch overflow-hidden rounded-lg border border-border-card bg-surface-card">
       <nav
         className="scrollbar-slim flex w-[271px] shrink-0 flex-col overflow-y-auto border-r border-border-default"
         aria-label="Form sections"

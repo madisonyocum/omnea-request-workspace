@@ -76,11 +76,20 @@ export function StepBody({ step, selected, onSelect, onArtefact }: StepBodyProps
                   ? 'text-success-500'
                   : step.meta.icon === 'x'
                     ? 'text-danger-500'
-                    : 'text-text-tertiary',
+                    : step.meta.tone === 'warning'
+                      ? 'text-warning-500'
+                      : 'text-text-tertiary',
               )}
               strokeWidth={1.6}
             />
-            <span className="min-w-0 flex-1 truncate text-[11px] text-text-tertiary">{step.meta.label}</span>
+            <span
+              className={cn(
+                'min-w-0 flex-1 truncate text-[11px]',
+                step.meta.tone === 'warning' ? 'text-warning-600' : 'text-text-tertiary',
+              )}
+            >
+              {step.meta.label}
+            </span>
           </span>
         )}
       </button>

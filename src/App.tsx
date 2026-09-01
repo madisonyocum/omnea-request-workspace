@@ -33,7 +33,7 @@ function RequestWorkspace() {
       <AppRail />
 
       <div className="flex min-h-0 min-w-0 flex-1 flex-col">
-        <div className="z-30 shrink-0 bg-surface-card shadow-chrome">
+        <div className="z-30 shrink-0 border-b border-border-default bg-surface-card">
           <RequestHeader />
           <StatStrip />
           <TabBar />

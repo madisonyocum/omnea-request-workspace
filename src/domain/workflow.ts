@@ -105,7 +105,7 @@ export const WORKFLOW_STAGES: WorkflowStage[] = [
         status: 'active',
         caption: 'Due 1 Jun',
         pill: { label: '3d in stage', tone: 'neutral' },
-        meta: { icon: 'bell', label: 'Reminder sent 30 May' },
+        meta: { icon: 'bell', label: 'Reminder sent 30 May', tone: 'warning' },
         artefact: { label: 'Approval form' },
         detail: {
           summary: 'Line manager sign-off on the commercial case before finance releases budget.',
@@ -122,18 +122,13 @@ export const WORKFLOW_STAGES: WorkflowStage[] = [
         id: 'budget-approval',
         name: 'Budget approval',
         assigneeId: 'jaslyn',
-        status: 'overdue',
-        caption: 'Due 2 Jun',
-        pill: { label: '2d overdue', tone: 'danger' },
-        meta: { icon: 'bell', label: '2 reminders sent' },
-        artefact: { label: 'Chase approver' },
+        status: 'waiting',
         detail: {
           summary: 'Finance confirms the spend sits inside the approved FY26 marketing envelope.',
-          slaLabel: '2 days overdue · SLA 2 days',
+          slaLabel: 'Requested 2 days ago · SLA 2 days',
           history: [
             { at: '27 May, 11:06', label: 'Assigned to Jaslyn Moore', actor: 'Automation' },
-            { at: '30 May, 08:00', label: 'Reminder sent', actor: 'Automation' },
-            { at: '2 Jun, 08:00', label: 'Reminder sent', actor: 'Automation' },
+            { at: '4 Jun, 09:12', label: 'Approval requested', actor: 'Alex Green' },
           ],
           attachments: [
             { name: 'Pricing schedule.xlsx', size: '84 KB' },
@@ -239,11 +234,10 @@ export const WORKFLOW_STAGES: WorkflowStage[] = [
 export const PENDING_ACTION: PendingAction = {
   stepId: 'budget-approval',
   duePill: 'Due in 2 days',
-  title: 'Budget approval is waiting on you',
-  subtitle: 'Jaslyn Moore asked you on 27 May',
+  title: 'Waiting on manager approval',
+  subtitle: 'You sent a request 2 days ago to Jaslyn Moore',
   checklist: [
-    { id: 'budget', label: 'Within the marketing budget for FY26', state: 'done' },
-    { id: 'procurement', label: 'Procurement approved 27 May', state: 'done' },
+    { id: 'sent', label: 'Sent to your manager', state: 'done' },
     { id: 'security', label: 'Security review not started · 2 high risks', state: 'attention' },
   ],
   attachments: ['Pricing schedule.xlsx', 'MSA v3.2.pdf'],
