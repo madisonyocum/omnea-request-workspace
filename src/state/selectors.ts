@@ -114,23 +114,17 @@ export function openFlags(state: WorkspaceState, scope: FlagScope, formId: strin
 }
 
 /**
- * Tab badges count rows the tab actually lists, so a badge always matches what
- * you see on opening it: tasks with work left, submitted forms carrying open
- * flags, and rows in the documents table.
+ * The tasks and submissions badges are the total open flags across each tab's
+ * forms, so they add up against the per-form flag badges and drop as flags are
+ * resolved. Documents counts rows in the table.
  */
 export function tabCounts(state: WorkspaceState) {
-  const openTasks = TASK_FORMS.filter((form) => {
-    const progress = taskProgress(form, state.taskAnswers);
-    return progress.answered < progress.total || openFlags(state, 'task', form.id).length > 0;
-  }).length;
-
-  const flaggedSubmissions = SUBMISSION_FORMS.filter(
-    (form) => openFlags(state, 'submission', form.id).length > 0,
-  ).length;
+  const countFlags = (scope: FlagScope, formIds: string[]) =>
+    formIds.reduce((total, formId) => total + openFlags(state, scope, formId).length, 0);
 
   return {
-    tasks: openTasks,
-    submissions: flaggedSubmissions,
+    tasks: countFlags('task', TASK_FORMS.map((form) => form.id)),
+    submissions: countFlags('submission', SUBMISSION_FORMS.map((form) => form.id)),
     documents: state.documents.length,
   };
 }
