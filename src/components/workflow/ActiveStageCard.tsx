@@ -60,17 +60,13 @@ export function ActiveStageCard({
 
   if (isCancelled) {
     return (
-      <div className="flex w-full flex-1 rounded-[14px] border border-border-default bg-surface-card">
+      <div className="flex w-full flex-1 overflow-hidden rounded-[14px] border border-border-default bg-surface-card">
         <div className="w-[4px] shrink-0 rounded-l-[14px] bg-border-strong" />
         <div className="flex flex-1 flex-col gap-[16px] px-[22px] py-[20px]">
           <div className="flex flex-col gap-[8px]">
             <div className="flex items-center gap-[12px]">
               <h3 className="text-[15px] font-medium text-text-primary">{step.name}</h3>
               <DotPill tone="muted">Cancelled</DotPill>
-              <span className="flex-1" />
-              <span className="text-[10px] font-medium tracking-[0.8px] text-text-tertiary">
-                {content.contextLabel}
-              </span>
             </div>
             <p className="text-[13px] text-text-secondary">
               {lastEvent ? lastEvent.label : 'This line was cancelled.'} Nothing further is needed here.
@@ -105,15 +101,13 @@ export function ActiveStageCard({
       approved.escalation && nextStep?.status === 'overdue' ? { ...approved.escalation, message: format(approved.escalation.message) } : undefined;
 
     return (
-      <div className="flex w-full flex-1 rounded-[14px] border border-border-default bg-surface-card">
+      <div className="flex w-full flex-1 overflow-hidden rounded-[14px] border border-border-default bg-surface-card">
         <div className="w-[4px] shrink-0 rounded-l-[14px] bg-success-500" />
         <div className="flex flex-1 flex-col gap-[16px] px-[22px] py-[20px]">
           <div className="flex flex-col gap-[8px]">
             <div className="flex items-center gap-[12px]">
               <h3 className="text-[15px] font-medium text-text-primary">{step.name}</h3>
               <DotPill tone="success">Approved</DotPill>
-              <span className="flex-1" />
-              <span className="text-[10px] font-medium tracking-[0.8px] text-text-tertiary">{content.contextLabel}</span>
             </div>
             <p className="text-[13px] text-text-secondary">{format(approved.body)}</p>
           </div>
@@ -209,17 +203,13 @@ export function ActiveStageCard({
     const format = (template: string) => template.replaceAll('{time}', declinedAt);
 
     return (
-      <div className="flex w-full flex-1 rounded-[14px] border border-border-default bg-surface-card">
+      <div className="flex w-full flex-1 overflow-hidden rounded-[14px] border border-border-default bg-surface-card">
         <div className="w-[4px] shrink-0 rounded-l-[14px] bg-danger-500" />
         <div className="flex flex-1 flex-col gap-[16px] px-[22px] py-[20px]">
           <div className="flex flex-col gap-[8px]">
             <div className="flex items-center gap-[12px]">
               <h3 className="text-[15px] font-medium text-text-primary">{step.name}</h3>
               <DotPill tone="danger">Declined</DotPill>
-              <span className="flex-1" />
-              <span className="text-[10px] font-medium tracking-[0.8px] text-text-tertiary">
-                {richDeclined.contextLabel}
-              </span>
             </div>
             <p className="text-[13px] text-text-secondary">{format(richDeclined.body)}</p>
           </div>
@@ -316,17 +306,13 @@ export function ActiveStageCard({
   const body = isDeclined ? `${actorName} declined this step. Reopen it if this needs another look.` : content.body;
 
   return (
-    <div className="flex w-full flex-1 rounded-[14px] border border-border-default bg-surface-card">
+    <div className="flex w-full flex-1 overflow-hidden rounded-[14px] border border-border-default bg-surface-card">
       <div className={cn('w-[4px] shrink-0 rounded-l-[14px]', railTone)} />
       <div className="flex flex-1 flex-col gap-[16px] px-[22px] py-[20px]">
         <div className="flex flex-col gap-[8px]">
           <div className="flex items-center gap-[12px]">
             <h3 className="text-[15px] font-medium text-text-primary">{step.name}</h3>
             <DotPill tone={pillTone}>{pillLabel}</DotPill>
-            <span className="flex-1" />
-            <span className="text-[10px] font-medium tracking-[0.8px] text-text-tertiary">
-              {content.contextLabel}
-            </span>
           </div>
           <p className="text-[13px] text-text-secondary">{body}</p>
         </div>

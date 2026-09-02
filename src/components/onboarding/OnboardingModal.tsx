@@ -6,7 +6,7 @@ const POINTS = [
   {
     Icon: Users,
     title: 'Switch roles',
-    body: 'Use the switch in the top right to jump between Requester, Approver, and Admin.',
+    body: 'Jump between Requester, Approver, and Admin up top.',
   },
   {
     Icon: GitBranch,
@@ -43,15 +43,15 @@ export function OnboardingModal({ onClose }: { onClose: () => void }) {
         aria-label="Welcome to the Request Prototype"
         className="animate-slide-up relative flex w-[600px] flex-col items-center overflow-hidden rounded-xl border border-border-default bg-surface-card text-center shadow-popover"
       >
-        <div className="flex flex-col items-center gap-[8px] px-[48px] pb-[32px] pt-[48px]">
+        <div className="flex flex-col items-center gap-[10px] px-[56px] pb-[36px] pt-[56px]">
           <h2 className="text-[21px] font-medium text-text-primary">Welcome to the Request Prototype</h2>
           <p className="max-w-[420px] text-[13px] leading-[1.55] text-text-tertiary">
-            This walks through a single procurement request, Mailchimp OM-49, as it moves through Omnea's
-            approval workflow.
+            This walks through a single procurement request, Mailchimp&nbsp;OM&#8209;49, as it moves through
+            Omnea's approval workflow.
           </p>
         </div>
 
-        <div className="grid w-full grid-cols-3 gap-[16px] px-[40px] pb-[12px]">
+        <div className="grid w-full grid-cols-3 gap-[20px] px-[48px] pb-[16px]">
           {POINTS.map(({ Icon, title, body }) => (
             <div key={title} className="flex flex-col items-center gap-[10px]">
               <span className="flex size-[38px] shrink-0 items-center justify-center rounded-full bg-surface-brand-subtle text-brand-600">
@@ -65,7 +65,7 @@ export function OnboardingModal({ onClose }: { onClose: () => void }) {
           ))}
         </div>
 
-        <div className="mt-[8px] w-full px-[40px] pb-[40px]">
+        <div className="mt-[12px] w-full px-[48px] pb-[48px]">
           <Button size="md" variant="primary" className="w-full" onClick={onClose}>
             Explore Prototype
           </Button>
