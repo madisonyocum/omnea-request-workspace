@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/Button';
 import { DotPill } from '@/components/ui/Pill';
 import { Menu } from '@/components/ui/Menu';
 import { PEOPLE, person } from '@/domain/people';
-import { ROLE_ACTIVE_CARD, ROLE_VIEWER_ID } from '@/domain/workflow';
+import { ROLE_ACCENT, ROLE_ACTIVE_CARD, ROLE_VIEWER_ID } from '@/domain/workflow';
 import type { WorkflowStage, WorkflowStep } from '@/domain/types';
 import { useWorkspace } from '@/state/workspaceContext';
 
@@ -48,7 +48,7 @@ export function ActiveStageCard({ stage, step }: { stage: WorkflowStage; step: W
 
   const pillTone = isComplete ? 'success' : isDeclined ? 'danger' : 'warning';
   const pillLabel = isComplete ? 'Approved' : isDeclined ? 'Declined' : content.duePill;
-  const railTone = isComplete ? 'bg-success-500' : isDeclined ? 'bg-danger-500' : 'bg-brand-600';
+  const railTone = isComplete ? 'bg-success-500' : isDeclined ? 'bg-danger-500' : ROLE_ACCENT[state.role].rail;
   const actorName = person(ROLE_VIEWER_ID[state.role]).name;
   const body = isComplete
     ? `${actorName} approved this step.`

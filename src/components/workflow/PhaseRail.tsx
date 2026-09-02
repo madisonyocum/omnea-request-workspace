@@ -1,33 +1,38 @@
 import { Check } from 'lucide-react';
 import { cn } from '@/lib/cn';
 import type { WorkflowStage } from '@/domain/types';
+import { ROLE_ACCENT } from '@/domain/workflow';
+import { useWorkspace } from '@/state/workspaceContext';
 
 export function PhaseRail({ stages }: { stages: WorkflowStage[] }) {
+  const { state } = useWorkspace();
+  const accent = ROLE_ACCENT[state.role];
+
   return (
-    <div className="flex w-[224px] shrink-0 flex-col">
+    <div className="flex w-[320px] shrink-0 flex-col gap-[4px]">
       {stages.map((stage) => {
         const complete = stage.steps.filter((step) => step.status === 'complete').length;
         return (
           <div
             key={stage.id}
             className={cn(
-              'flex items-center gap-[10px] rounded-[10px] px-[12px] py-[11px]',
-              stage.status === 'current' && 'bg-surface-brand-tint',
+              'flex items-center gap-[12px] rounded-[12px] px-[16px] py-[14px]',
+              stage.status === 'current' && accent.tint,
             )}
           >
             {stage.status === 'complete' ? (
-              <Check className="size-[14px] shrink-0 text-success-500" strokeWidth={2.4} />
+              <Check className="size-[16px] shrink-0 text-success-500" strokeWidth={2.4} />
             ) : (
               <span
                 className={cn(
-                  'size-[8px] shrink-0 rounded-full',
-                  stage.status === 'current' ? 'bg-brand-600' : 'bg-text-disabled',
+                  'size-[9px] shrink-0 rounded-full',
+                  stage.status === 'current' ? accent.dot : 'bg-text-disabled',
                 )}
               />
             )}
             <span
               className={cn(
-                'text-[12px] font-medium',
+                'text-[14px] font-medium',
                 stage.status === 'current' ? 'text-text-primary' : 'text-text-secondary',
               )}
             >
@@ -36,8 +41,8 @@ export function PhaseRail({ stages }: { stages: WorkflowStage[] }) {
             <span className="flex-1" />
             <span
               className={cn(
-                'text-[9px] font-medium',
-                stage.status === 'current' ? 'text-brand-700' : 'text-text-tertiary',
+                'text-[10px] font-medium',
+                stage.status === 'current' ? accent.text : 'text-text-tertiary',
               )}
             >
               {complete} of {stage.steps.length}

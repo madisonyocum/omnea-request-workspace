@@ -364,6 +364,17 @@ export const ROLE_ALSO_RUNNING: Record<UserRole, RoleAlsoRunningContent> = {
   admin: { heading: 'ALL LINES IN THIS PHASE · YOU CAN OVERRIDE', viewOnly: false },
 };
 
+/**
+ * The signature colour for the "current" indicators — phase rail highlight,
+ * the active card's rail — so the top of the workflow reads at a glance as
+ * requester (brand), approver (amber, decision pending) or admin (ink).
+ */
+export const ROLE_ACCENT: Record<UserRole, { tint: string; dot: string; rail: string; text: string }> = {
+  requester: { tint: 'bg-surface-brand-tint', dot: 'bg-brand-600', rail: 'bg-brand-600', text: 'text-brand-700' },
+  approver: { tint: 'bg-warning-50', dot: 'bg-warning-500', rail: 'bg-warning-500', text: 'text-warning-700' },
+  admin: { tint: 'bg-surface-sunken', dot: 'bg-surface-rail-active', rail: 'bg-surface-rail-active', text: 'text-text-primary' },
+};
+
 export const INITIAL_COMMENTS: Comment[] = [
   {
     id: 'c1',
