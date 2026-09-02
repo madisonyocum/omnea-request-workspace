@@ -35,13 +35,16 @@ export function WorkflowTimeline() {
   const leadStep = viewedStage.steps.find((step) => step.id === focusedId) ?? viewedStage.steps[0];
   const branchSteps = viewedStage.steps.filter((step) => step.id !== leadStep.id);
 
+  const currentIndex = state.stages.findIndex((stage) => stage.id === currentStage.id);
+  const phaseLabel = `Phase ${currentIndex + 1} of ${state.stages.length} · ${currentStage.label}`;
+
   return (
     <section className="rounded-xl border border-border-subtle bg-surface-card px-[22px] pb-[22px] pt-[18px]">
       <header className="flex h-[24px] items-center gap-[12px]">
         <h2 className="text-[15px] font-medium text-text-primary">Workflow</h2>
         <Badge tone="subtle" size="sm">{WORKFLOW_META.type.toUpperCase()}</Badge>
         <div className="flex-1" />
-        <span className="text-[12px] text-text-secondary">{WORKFLOW_META.stageLabel}</span>
+        <span className="text-[12px] text-text-secondary">{phaseLabel}</span>
         <span className="text-[12px] text-text-disabled">·</span>
         <span className="text-[12px] text-text-tertiary">{WORKFLOW_META.updatedLabel}</span>
       </header>

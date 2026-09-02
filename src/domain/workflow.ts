@@ -31,7 +31,6 @@ export const STAT_STRIP: StatItem[] = [
 
 export const WORKFLOW_META = {
   type: 'New purchase',
-  stageLabel: 'Phase 3 of 6 · Stage 3 of 13',
   updatedLabel: 'Updated 6 Jun, 12:34',
 };
 
