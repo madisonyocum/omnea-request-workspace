@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { FlaskConical, GitBranch, ShieldCheck, Users } from 'lucide-react';
+import { GitBranch, ShieldCheck, Users } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 
 const POINTS = [
@@ -43,17 +43,12 @@ export function OnboardingModal({ onClose }: { onClose: () => void }) {
         aria-label="Welcome to the prototype"
         className="animate-slide-up relative flex w-[600px] flex-col items-center overflow-hidden rounded-xl border border-border-default bg-surface-card text-center shadow-popover"
       >
-        <div className="flex flex-col items-center gap-[18px] px-[48px] pb-[32px] pt-[48px]">
-          <div className="flex size-[56px] shrink-0 items-center justify-center rounded-[16px] bg-brand-600 text-white">
-            <FlaskConical className="size-[26px]" strokeWidth={1.8} />
-          </div>
-          <div className="flex flex-col items-center gap-[8px]">
-            <h2 className="text-[21px] font-medium text-text-primary">Welcome to the prototype</h2>
-            <p className="max-w-[420px] text-[13px] leading-[1.55] text-text-tertiary">
-              This walks through a single procurement request, Mailchimp OM-49, as it moves through Omnea's
-              approval workflow.
-            </p>
-          </div>
+        <div className="flex flex-col items-center gap-[8px] px-[48px] pb-[32px] pt-[48px]">
+          <h2 className="text-[21px] font-medium text-text-primary">Welcome to the prototype</h2>
+          <p className="max-w-[420px] text-[13px] leading-[1.55] text-text-tertiary">
+            This walks through a single procurement request, Mailchimp OM-49, as it moves through Omnea's
+            approval workflow.
+          </p>
         </div>
 
         <div className="grid w-full grid-cols-3 gap-[16px] px-[40px] pb-[12px]">
