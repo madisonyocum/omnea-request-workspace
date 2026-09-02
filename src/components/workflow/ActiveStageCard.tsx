@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { AlertTriangle, Ban, Bell, Check, ChevronRight, MoreHorizontal, Paperclip } from 'lucide-react';
 import { cn } from '@/lib/cn';
 import { Button } from '@/components/ui/Button';
@@ -33,6 +34,7 @@ export function ActiveStageCard({
   const visibleFiles = files.slice(0, 2);
   const moreFiles = files.length - visibleFiles.length;
   const lastEvent = step.detail.history[step.detail.history.length - 1];
+  const [justReminded, setJustReminded] = useState(false);
 
   const isComplete = step.status === 'complete';
   const isDeclined = step.status === 'declined';
@@ -43,6 +45,7 @@ export function ActiveStageCard({
   const runAction = (kind: 'remind' | 'reassign' | 'approve' | 'decline' | 'override' | 'reopen') => {
     switch (kind) {
       case 'remind':
+        setJustReminded(true);
         dispatch({ type: 'step/remind', stepId: step.id });
         return;
       case 'approve':
@@ -113,10 +116,12 @@ export function ActiveStageCard({
           </div>
 
           <div className="flex items-center gap-[14px]">
-            <span className="flex size-[24px] shrink-0 items-center justify-center rounded-full bg-success-500">
-              <Check className="size-[11px] text-white" strokeWidth={3} />
+            <span className="flex items-center gap-[7px]">
+              <span className="flex size-[24px] shrink-0 items-center justify-center rounded-full bg-success-500">
+                <Check className="size-[11px] text-white" strokeWidth={3} />
+              </span>
+              <span className="text-[12px] font-medium text-text-primary">{viewerIsAssignee ? 'You' : assignee.name}</span>
             </span>
-            <span className="text-[12px] font-medium text-text-primary">{viewerIsAssignee ? 'You' : assignee.name}</span>
             <span className="text-[12px] text-text-disabled">·</span>
             <span className="text-[9px] font-medium text-text-tertiary">
               Approved {approvedAt} · {approved.metaCaption}
@@ -214,10 +219,12 @@ export function ActiveStageCard({
           </div>
 
           <div className="flex items-center gap-[14px]">
-            <span className="flex size-[24px] shrink-0 items-center justify-center rounded-full bg-danger-500">
-              <Ban className="size-[11px] text-white" strokeWidth={2.6} />
+            <span className="flex items-center gap-[7px]">
+              <span className="flex size-[24px] shrink-0 items-center justify-center rounded-full bg-danger-500">
+                <Ban className="size-[11px] text-white" strokeWidth={2.6} />
+              </span>
+              <span className="text-[12px] font-medium text-text-primary">{person(step.assigneeId).name}</span>
             </span>
-            <span className="text-[12px] font-medium text-text-primary">{person(step.assigneeId).name}</span>
             <span className="text-[12px] text-text-disabled">·</span>
             <span className="text-[9px] font-medium text-text-tertiary">Declined {declinedAt}</span>
             {visibleFiles.length > 0 && (
@@ -290,7 +297,7 @@ export function ActiveStageCard({
     );
   }
 
-  const meta = person(content.meta.personId);
+  const meta = person(content.meta.personId === 'assignee' ? step.assigneeId : content.meta.personId);
   const actions =
     isDeclined && state.role === 'approver'
       ? [{ label: 'Reopen for decision', variant: 'secondary' as const, kind: 'reopen' as const }]
@@ -301,11 +308,13 @@ export function ActiveStageCard({
   const pillLabel = isDeclined ? 'Declined' : content.duePill;
   const railTone = isDeclined ? 'bg-danger-500' : isPreview ? 'bg-border-strong' : ROLE_ACCENT[state.role].rail;
   const actorName = person(roleViewerId(state.role, state.stages)).name;
-  const body = isDeclined ? `${actorName} declined this step. Reopen it if this needs another look.` : content.body;
+  const body = isDeclined
+    ? `${actorName} declined this step. Reopen it if this needs another look.`
+    : content.body.replaceAll('{assignee}', meta.name);
 
   return (
     <div className="flex w-full flex-1 overflow-hidden rounded-[14px] border border-border-default bg-surface-card">
-      <div className={cn('w-[4px] shrink-0 rounded-l-[14px]', railTone)} />
+      <div className={cn('w-[4px] shrink-0 rounded-l-[14px] transition-colors duration-200', railTone)} />
       <div className="flex flex-1 flex-col gap-[16px] px-[22px] py-[20px]">
         <div className="flex flex-col gap-[8px]">
           <div className="flex items-center gap-[12px]">
@@ -316,15 +325,17 @@ export function ActiveStageCard({
         </div>
 
         <div className="flex items-center gap-[14px]">
-          <span
-            className={cn(
-              'flex size-[24px] shrink-0 items-center justify-center rounded-full',
-              isPreview ? 'bg-text-disabled' : 'bg-warning-500',
-            )}
-          >
-            <span className="text-[9px] font-bold text-white">{meta.initials}</span>
+          <span className="flex items-center gap-[7px]">
+            <span
+              className={cn(
+                'flex size-[24px] shrink-0 items-center justify-center rounded-full transition-colors duration-200',
+                isPreview ? 'bg-text-disabled' : 'bg-warning-500',
+              )}
+            >
+              <span className="text-[9px] font-bold text-white">{meta.initials}</span>
+            </span>
+            <span className="text-[12px] font-medium text-text-primary">{meta.name}</span>
           </span>
-          <span className="text-[12px] font-medium text-text-primary">{meta.name}</span>
           <span className="text-[12px] text-text-disabled">·</span>
           <span className="text-[9px] font-medium text-text-tertiary">{content.meta.caption}</span>
           {step.meta?.icon === 'bell' && (
@@ -372,7 +383,7 @@ export function ActiveStageCard({
             <span className="min-w-0 flex-1 text-[12px] font-medium text-danger-700">{stage.blocker.message}</span>
             <button
               type="button"
-              onClick={() => dispatch({ type: 'toast/show', message: 'Opening open risks' })}
+              onClick={() => dispatch({ type: 'toast/show', message: 'Opening the open risks panel for this request.' })}
               className="shrink-0 cursor-pointer text-[12px] font-medium whitespace-nowrap text-danger-700 hover:underline"
             >
               {stage.blocker.linkLabel}
@@ -387,7 +398,7 @@ export function ActiveStageCard({
             </span>
             <button
               type="button"
-              onClick={() => dispatch({ type: 'toast/show', message: 'Opening rule editor' })}
+              onClick={() => dispatch({ type: 'toast/show', message: 'Opening the policy rule editor for this workflow.' })}
               className="shrink-0 cursor-pointer text-[12px] font-medium whitespace-nowrap text-text-secondary hover:underline"
             >
               {content.policyBanner.linkLabel}
@@ -415,6 +426,16 @@ export function ActiveStageCard({
                     </Button>
                   )}
                 </Menu>
+              ) : action.kind === 'remind' && justReminded ? (
+                <Button
+                  key={action.kind}
+                  size="md"
+                  variant="secondary"
+                  icon={<Check className="animate-pop-in size-[13px] text-success-500" strokeWidth={2.6} />}
+                  onClick={() => runAction(action.kind)}
+                >
+                  Reminder sent
+                </Button>
               ) : (
                 <Button
                   key={action.kind}
@@ -431,8 +452,8 @@ export function ActiveStageCard({
               align="start"
               width={170}
               items={[
-                { id: 'copy', label: 'Copy link to step', onSelect: () => dispatch({ type: 'toast/show', message: 'Link copied' }) },
-                { id: 'escalate', label: 'Escalate', onSelect: () => dispatch({ type: 'toast/show', message: 'Escalated to workflow admins' }) },
+                { id: 'copy', label: 'Copy link to step', onSelect: () => dispatch({ type: 'toast/show', message: 'Link to this step copied to your clipboard.' }) },
+                { id: 'escalate', label: 'Escalate', onSelect: () => dispatch({ type: 'toast/show', message: "Escalated to workflow admins - they've been notified." }) },
               ]}
             >
               {({ open, toggle }) => (

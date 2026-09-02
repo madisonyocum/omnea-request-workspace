@@ -57,7 +57,7 @@ export function DocumentsView() {
         <div className="flex items-start justify-between">
           <h2 className="text-[16px] font-medium text-text-primary">Documents</h2>
           <div className="flex items-start gap-[10px]">
-            <Button onClick={() => dispatch({ type: 'toast/show', message: 'Custom fields are managed by admins' })}>
+            <Button onClick={() => dispatch({ type: 'toast/show', message: 'Custom fields are managed by admins.' })}>
               Add field
             </Button>
             <Menu
@@ -67,7 +67,7 @@ export function DocumentsView() {
                 label: column.label,
                 disabled: column.id === 'name',
                 onSelect: () =>
-                  dispatch({ type: 'toast/show', message: `${column.label} column hidden` }),
+                  dispatch({ type: 'toast/show', message: `${column.label} column hidden - bring it back from this menu.` }),
               }))}
             >
               {({ open, toggle }) => (
@@ -182,13 +182,13 @@ function Row({ row }: { row: DocumentRow }) {
               id: 'open',
               label: 'Open document',
               icon: <ExternalLink className="size-[13px]" strokeWidth={1.8} />,
-              onSelect: () => dispatch({ type: 'toast/show', message: `Opening ${row.name}` }),
+              onSelect: () => dispatch({ type: 'toast/show', message: `Opening ${row.name} in a new tab.` }),
             },
             {
               id: 'download',
               label: 'Download',
               icon: <Download className="size-[13px]" strokeWidth={1.8} />,
-              onSelect: () => dispatch({ type: 'toast/show', message: `${row.name} downloaded` }),
+              onSelect: () => dispatch({ type: 'toast/show', message: `${row.name} downloaded to your device.` }),
             },
             {
               id: 'remove',
@@ -215,7 +215,7 @@ function Row({ row }: { row: DocumentRow }) {
         </Menu>
         <button
           type="button"
-          onClick={() => dispatch({ type: 'toast/show', message: `Opening ${row.name}` })}
+          onClick={() => dispatch({ type: 'toast/show', message: `Opening ${row.name} in a new tab.` })}
           className="min-w-0 cursor-pointer truncate text-[13px] font-medium text-text-primary hover:text-brand-700 hover:underline"
         >
           {row.name}

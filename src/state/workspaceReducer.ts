@@ -147,7 +147,9 @@ export function workspaceReducer(state: WorkspaceState, action: WorkspaceAction)
     case 'following/toggle':
       return withToast(
         { ...state, following: !state.following },
-        state.following ? 'You have stopped following OM-49' : 'You are now following OM-49',
+        state.following
+          ? "You've stopped following OM-49 - no more update notifications."
+          : "You're now following OM-49 - you'll get notified on updates.",
       );
 
     case 'step/select':
@@ -174,7 +176,7 @@ export function workspaceReducer(state: WorkspaceState, action: WorkspaceAction)
             },
           })),
         },
-        `Reminder sent to ${person(step.assigneeId).name}`,
+        `Reminder sent to ${person(step.assigneeId).name} - email nudge on its way.`,
         'success',
       );
     }
@@ -182,6 +184,7 @@ export function workspaceReducer(state: WorkspaceState, action: WorkspaceAction)
     case 'step/reassign': {
       const step = findStep(state.stages, action.stepId);
       if (!step) return state;
+      const newAssignee = person(action.assigneeId).name;
       return withToast(
         {
           ...state,
@@ -197,7 +200,7 @@ export function workspaceReducer(state: WorkspaceState, action: WorkspaceAction)
             },
           })),
         },
-        `${step.name} reassigned`,
+        `${step.name} reassigned to ${newAssignee} - they've been notified.`,
         'success',
       );
     }
@@ -235,7 +238,9 @@ export function workspaceReducer(state: WorkspaceState, action: WorkspaceAction)
 
         return withToast(
           { ...state, stages },
-          cascaded.length > 0 ? `${step.name} declined, ${cascaded.length} line cancelled` : `${step.name} declined`,
+          cascaded.length > 0
+            ? `${step.name} declined - ${cascaded.length} downstream line${cascaded.length === 1 ? '' : 's'} cancelled.`
+            : `${step.name} declined - the requester has been notified.`,
           'danger',
         );
       }
@@ -266,7 +271,9 @@ export function workspaceReducer(state: WorkspaceState, action: WorkspaceAction)
       const decisionVerb = action.decision === 'override' ? 'overridden & advanced' : 'approved';
       return withToast(
         { ...state, stages },
-        stageComplete ? `${step.name} ${decisionVerb}, ${stage.label} complete` : `${step.name} ${decisionVerb}`,
+        stageComplete
+          ? `${step.name} ${decisionVerb} - ${stage.label} is now complete.`
+          : `${step.name} ${decisionVerb} - on to the next step.`,
         'success',
       );
     }
@@ -303,7 +310,7 @@ export function workspaceReducer(state: WorkspaceState, action: WorkspaceAction)
 
       return withToast(
         { ...state, stages },
-        `${step.name} reopened`,
+        `${step.name} reopened - cancelled lines behind it are reinstated.`,
       );
     }
 
@@ -343,7 +350,7 @@ export function workspaceReducer(state: WorkspaceState, action: WorkspaceAction)
             comment.id === action.commentId ? { ...comment, resolved: !comment.resolved } : comment,
           ),
         },
-        target?.resolved ? 'Comment reopened' : 'Comment resolved',
+        target?.resolved ? 'Comment reopened - needs another look.' : 'Comment resolved - cleared from the open list.',
       );
     }
 
@@ -377,7 +384,7 @@ export function workspaceReducer(state: WorkspaceState, action: WorkspaceAction)
       };
       return withToast(
         withFlags(state, action.scope, action.formId, (flags) => [...flags, flag]),
-        'Flag raised — Peter Kaminsky has been asked to respond',
+        'Flag raised - Peter Kaminsky has been asked to respond.',
         'success',
       );
     }
@@ -397,7 +404,7 @@ export function workspaceReducer(state: WorkspaceState, action: WorkspaceAction)
               : flag,
           ),
         ),
-        resolving ? 'Flag resolved' : 'Flag reopened',
+        resolving ? 'Flag resolved - the concern is cleared.' : 'Flag reopened - needs another look.',
         resolving ? 'success' : 'default',
       );
     }
@@ -426,7 +433,7 @@ export function workspaceReducer(state: WorkspaceState, action: WorkspaceAction)
             ...state.documents,
           ],
         },
-        `${action.name} uploaded`,
+        `${action.name} uploaded and added to the document repository.`,
         'success',
       );
 
@@ -434,7 +441,7 @@ export function workspaceReducer(state: WorkspaceState, action: WorkspaceAction)
       const target = state.documents.find((doc) => doc.id === action.documentId);
       return withToast(
         { ...state, documents: state.documents.filter((doc) => doc.id !== action.documentId) },
-        target ? `${target.name} removed` : 'Document removed',
+        target ? `${target.name} removed from the document repository.` : 'Document removed from the repository.',
       );
     }
 

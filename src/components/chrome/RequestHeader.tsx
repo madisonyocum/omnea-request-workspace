@@ -100,26 +100,26 @@ export function RequestHeader({
             id: 'duplicate',
             label: 'Duplicate request',
             icon: <Copy className="size-[13px]" strokeWidth={1.8} />,
-            onSelect: () => dispatch({ type: 'toast/show', message: 'Draft copy of OM-49 created' }),
+            onSelect: () => dispatch({ type: 'toast/show', message: 'Draft copy of OM-49 created in your drafts, ready to edit and send.' }),
           },
           {
             id: 'export',
             label: 'Export audit trail',
             icon: <Download className="size-[13px]" strokeWidth={1.8} />,
-            onSelect: () => dispatch({ type: 'toast/show', message: 'Audit trail export queued' }),
+            onSelect: () => dispatch({ type: 'toast/show', message: "Audit trail export queued - download link coming by email." }),
           },
           {
             id: 'workflow',
             label: 'Workflow settings',
             icon: <Settings className="size-[13px]" strokeWidth={1.8} />,
-            onSelect: () => dispatch({ type: 'toast/show', message: 'Only workflow admins can edit this' }),
+            onSelect: () => dispatch({ type: 'toast/show', message: "Only workflow admins can edit this request's settings." }),
           },
           {
             id: 'archive',
             label: 'Archive request',
             icon: <Archive className="size-[13px]" strokeWidth={1.8} />,
             tone: 'danger',
-            onSelect: () => dispatch({ type: 'toast/show', message: 'Archiving needs approver sign-off', tone: 'danger' }),
+            onSelect: () => dispatch({ type: 'toast/show', message: 'Archiving this request needs approver sign-off before it can be put away.', tone: 'danger' }),
           },
         ]}
       >
@@ -191,7 +191,7 @@ function ShareModal({ onClose }: { onClose: () => void }) {
             size="md"
             variant="primary"
             onClick={() => {
-              dispatch({ type: 'toast/show', message: 'Invite sent to 1 person', tone: 'success' });
+              dispatch({ type: 'toast/show', message: "Invite sent - they'll get access once they accept.", tone: 'success' });
               onClose();
             }}
           >
@@ -208,7 +208,7 @@ function ShareModal({ onClose }: { onClose: () => void }) {
           <Button
             onClick={() => {
               setCopied(true);
-              dispatch({ type: 'toast/show', message: 'Link copied to clipboard', tone: 'success' });
+              dispatch({ type: 'toast/show', message: 'Link copied - paste it anywhere to invite someone.', tone: 'success' });
             }}
           >
             {copied ? 'Copied' : 'Copy link'}

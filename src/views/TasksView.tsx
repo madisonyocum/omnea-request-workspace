@@ -92,7 +92,7 @@ function TaskFormShell({
             <Button
               size="md"
               onClick={() => {
-                dispatch({ type: 'toast/show', message: `${form.name} draft saved`, tone: 'success' });
+                dispatch({ type: 'toast/show', message: `${form.name} draft saved - pick up anytime.`, tone: 'success' });
                 dispatch({ type: 'tab/select', tab: 'overview' });
               }}
             >
@@ -108,7 +108,7 @@ function TaskFormShell({
                 } else
                   dispatch({
                     type: 'toast/show',
-                    message: `${form.name} submitted for review`,
+                    message: `${form.name} submitted for review.`,
                     tone: 'success',
                   });
               }}
@@ -134,7 +134,7 @@ function TaskFormShell({
             onRequestUpdates={() =>
               dispatch({
                 type: 'toast/show',
-                message: `${open.length} flagged ${open.length === 1 ? 'answer' : 'answers'} sent back to Peter Kaminsky`,
+                message: `${open.length} flagged ${open.length === 1 ? 'answer' : 'answers'} sent back to Peter Kaminsky for another look.`,
                 tone: 'success',
               })
             }

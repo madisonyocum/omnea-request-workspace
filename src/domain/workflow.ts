@@ -324,8 +324,8 @@ export const ROLE_ACTIVE_CARD: Record<string, Record<UserRole, RoleActiveCardCon
     requester: {
       duePill: 'Due in 2 days',
       contextLabel: 'APPROVALS · STAGE 1 OF 3',
-      body: 'Waiting on Martha Nelson. You sent the request 2 days ago.',
-      meta: { personId: 'martha', caption: 'Due 1 Jun · 3 days in stage' },
+      body: 'Waiting on {assignee}. You sent the request 2 days ago.',
+      meta: { personId: 'assignee', caption: 'Due 1 Jun · 3 days in stage' },
       actions: [
         { label: 'Send reminder', variant: 'dark', kind: 'remind' },
         { label: 'Reassign approver', variant: 'secondary', kind: 'reassign' },
@@ -346,8 +346,8 @@ export const ROLE_ACTIVE_CARD: Record<string, Record<UserRole, RoleActiveCardCon
     admin: {
       duePill: 'Due in 2 days',
       contextLabel: 'APPROVALS · STAGE 1 OF 3',
-      body: 'Waiting on Martha Nelson for 3 days. The 3-day approval SLA breaches tomorrow at 12:00.',
-      meta: { personId: 'martha', caption: 'Due 1 Jun · 3 days in stage · SLA 3 days' },
+      body: 'Waiting on {assignee} for 3 days. The 3-day approval SLA breaches tomorrow at 12:00.',
+      meta: { personId: 'assignee', caption: 'Due 1 Jun · 3 days in stage · SLA 3 days' },
       actions: [
         { label: 'Send reminder', variant: 'dark', kind: 'remind' },
         { label: 'Reassign approver', variant: 'secondary', kind: 'reassign' },
@@ -364,8 +364,8 @@ export const ROLE_ACTIVE_CARD: Record<string, Record<UserRole, RoleActiveCardCon
     requester: {
       duePill: 'Overdue',
       contextLabel: 'APPROVALS · STAGE 2 OF 3',
-      body: "Jaslyn Moore hasn't approved the £48,000 budget. It's 2 days overdue and is the last thing holding up the purchase order.",
-      meta: { personId: 'jaslyn', caption: 'Due 29 May · 4 days in stage' },
+      body: "{assignee} hasn't approved the £48,000 budget. It's 2 days overdue and is the last thing holding up the purchase order.",
+      meta: { personId: 'assignee', caption: 'Due 29 May · 4 days in stage' },
       actions: [
         { label: 'Send reminder', variant: 'dark', kind: 'remind' },
         { label: 'Reassign approver', variant: 'secondary', kind: 'reassign' },
@@ -375,16 +375,16 @@ export const ROLE_ACTIVE_CARD: Record<string, Record<UserRole, RoleActiveCardCon
     approver: {
       duePill: 'Overdue',
       contextLabel: 'VIEW ONLY · APPROVALS · STAGE 2 OF 3',
-      body: "Jaslyn Moore hasn't approved the £48,000 budget. Your line is done, this is here so you can see what's holding the request.",
-      meta: { personId: 'jaslyn', caption: 'Due 29 May · 4 days in stage' },
+      body: "{assignee} hasn't approved the £48,000 budget. Your line is done, this is here so you can see what's holding the request.",
+      meta: { personId: 'assignee', caption: 'Due 29 May · 4 days in stage' },
       actions: [],
       linkLabel: 'More details',
     },
     admin: {
       duePill: 'Overdue',
       contextLabel: 'APPROVALS · STAGE 2 OF 3',
-      body: 'Jaslyn Moore is 2 days past the 3-day SLA on the £48,000 budget. Legal review and the purchase order are both blocked behind this line.',
-      meta: { personId: 'jaslyn', caption: 'Due 29 May · 4 days in stage · SLA 3 days' },
+      body: '{assignee} is 2 days past the 3-day SLA on the £48,000 budget. Legal review and the purchase order are both blocked behind this line.',
+      meta: { personId: 'assignee', caption: 'Due 29 May · 4 days in stage · SLA 3 days' },
       actions: [
         { label: 'Send reminder', variant: 'dark', kind: 'remind' },
         { label: 'Reassign approver', variant: 'secondary', kind: 'reassign' },
@@ -397,8 +397,8 @@ export const ROLE_ACTIVE_CARD: Record<string, Record<UserRole, RoleActiveCardCon
     requester: {
       duePill: 'In progress',
       contextLabel: 'REVIEWS · STAGE 1 OF 2',
-      body: 'Waiting on Sadie Bernard to finish the security review, the last thing standing between here and engagement.',
-      meta: { personId: 'sadie', caption: 'Started 6 Jun · SLA 5 days' },
+      body: 'Waiting on {assignee} to finish the security review, the last thing standing between here and engagement.',
+      meta: { personId: 'assignee', caption: 'Started 6 Jun · SLA 5 days' },
       actions: [
         { label: 'Send reminder', variant: 'dark', kind: 'remind' },
         { label: 'Reassign approver', variant: 'secondary', kind: 'reassign' },
@@ -419,8 +419,8 @@ export const ROLE_ACTIVE_CARD: Record<string, Record<UserRole, RoleActiveCardCon
     admin: {
       duePill: 'In progress',
       contextLabel: 'REVIEWS · STAGE 1 OF 2',
-      body: 'Sadie Bernard is inside the 5-day security review SLA, with no open risks since Approvals cleared.',
-      meta: { personId: 'sadie', caption: 'Started 6 Jun · SLA 5 days' },
+      body: '{assignee} is inside the 5-day security review SLA, with no open risks since Approvals cleared.',
+      meta: { personId: 'assignee', caption: 'Started 6 Jun · SLA 5 days' },
       actions: [
         { label: 'Send reminder', variant: 'dark', kind: 'remind' },
         { label: 'Reassign approver', variant: 'secondary', kind: 'reassign' },

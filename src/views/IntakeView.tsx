@@ -66,14 +66,14 @@ export function IntakeView() {
               size="md"
               variant="primary"
               icon={<Pencil className="size-[13px]" strokeWidth={1.9} />}
-              onClick={() => dispatch({ type: 'toast/show', message: 'Intake form unlocked for editing' })}
+              onClick={() => dispatch({ type: 'toast/show', message: 'Intake form unlocked for editing.' })}
             >
               Edit form
             </Button>
             <Button
               size="md"
               icon={<MessageSquarePlus className="size-[14px]" strokeWidth={1.8} />}
-              onClick={() => dispatch({ type: 'toast/show', message: 'Comment thread opened on the intake form' })}
+              onClick={() => dispatch({ type: 'toast/show', message: 'Comment thread opened on the intake form.' })}
             >
               Add comment
             </Button>
@@ -117,7 +117,7 @@ export function IntakeView() {
                           id: 'history',
                           label: 'View answer history',
                           onSelect: () =>
-                            dispatch({ type: 'toast/show', message: 'No edits since submission on 24 May' }),
+                            dispatch({ type: 'toast/show', message: 'No edits since this was submitted on 24 May.' }),
                         },
                         {
                           id: 'flag',
@@ -125,7 +125,7 @@ export function IntakeView() {
                           onSelect: () =>
                             dispatch({
                               type: 'toast/show',
-                              message: 'Clarification requested from Ben Williams',
+                              message: 'Clarification requested from Ben Williams.',
                               tone: 'success',
                             }),
                         },

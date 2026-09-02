@@ -7,9 +7,9 @@ export function RoleSwitchHint({ onClose }: { onClose: () => void }) {
       <div
         role="dialog"
         aria-label="Switch between roles"
-        className="animate-fade-in absolute right-0 top-full z-50 mt-[12px] w-max rounded-xl bg-text-primary p-[16px] text-white shadow-popover"
+        className="animate-fade-in absolute left-0 top-full z-50 mt-[12px] w-max rounded-xl bg-text-primary p-[16px] text-white shadow-popover"
       >
-        <span className="absolute -top-[6px] right-[28px] size-[12px] rotate-45 bg-text-primary" />
+        <span className="absolute -top-[6px] left-[36px] size-[12px] rotate-45 bg-text-primary" />
         <div className="flex items-center gap-[8px]">
           <div className="flex size-[28px] shrink-0 items-center justify-center rounded-md bg-brand-600">
             <Zap className="size-[15px] text-white" strokeWidth={2} fill="currentColor" />

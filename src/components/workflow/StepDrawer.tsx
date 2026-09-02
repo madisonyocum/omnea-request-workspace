@@ -179,7 +179,7 @@ function StepDrawerBody({ step, stage, onOpenTab, onClose }: StepDrawerBodyProps
                 <button
                   key={file.name}
                   type="button"
-                  onClick={() => dispatch({ type: 'toast/show', message: `Opening ${file.name}` })}
+                  onClick={() => dispatch({ type: 'toast/show', message: `Opening ${file.name} in a new tab.` })}
                   className="flex cursor-pointer items-center gap-[8px] rounded-sm border border-border-default bg-surface-subtle px-[10px] py-[8px] text-left transition-colors duration-120 hover:border-border-strong hover:bg-surface-sunken"
                 >
                   <Paperclip className="size-[13px] shrink-0 text-text-tertiary" strokeWidth={1.7} />

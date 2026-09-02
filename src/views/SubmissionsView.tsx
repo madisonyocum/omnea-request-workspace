@@ -85,7 +85,7 @@ function SubmissionBody({ form }: { form: SubmissionForm }) {
             onRequestUpdates={() =>
               dispatch({
                 type: 'toast/show',
-                message: `Update requested from Peter Kaminsky on ${open.length} flagged ${open.length === 1 ? 'answer' : 'answers'}`,
+                message: `Update requested from Peter Kaminsky on ${open.length} flagged ${open.length === 1 ? 'answer' : 'answers'}.`,
                 tone: 'success',
               })
             }
@@ -119,7 +119,7 @@ function SubmissionBody({ form }: { form: SubmissionForm }) {
                   id: 'comment',
                   label: 'Comment on answer',
                   onSelect: () =>
-                    dispatch({ type: 'toast/show', message: 'Comment thread opened on this answer' }),
+                    dispatch({ type: 'toast/show', message: 'Comment thread opened on this answer.' }),
                 },
                 {
                   id: 'request',
@@ -127,7 +127,7 @@ function SubmissionBody({ form }: { form: SubmissionForm }) {
                   onSelect: () =>
                     dispatch({
                       type: 'toast/show',
-                      message: 'Update requested from Peter Kaminsky',
+                      message: 'Update requested from Peter Kaminsky.',
                       tone: 'success',
                     }),
                 },

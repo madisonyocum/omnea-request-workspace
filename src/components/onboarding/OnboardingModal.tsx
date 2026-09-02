@@ -51,9 +51,9 @@ export function OnboardingModal({ onClose }: { onClose: () => void }) {
           </p>
         </div>
 
-        <div className="flex justify-center gap-[24px] px-[32px] pb-[16px]">
+        <div className="grid grid-cols-3 gap-[24px] px-[32px] pb-[16px]">
           {POINTS.map(({ Icon, title, body }) => (
-            <div key={title} className="flex min-w-0 flex-1 flex-col items-center gap-[10px] lg:flex-none lg:basis-auto">
+            <div key={title} className="flex min-w-0 flex-col items-center gap-[10px]">
               <span className="flex size-[38px] shrink-0 items-center justify-center rounded-full bg-surface-brand-subtle text-brand-600">
                 <Icon className="size-[18px]" strokeWidth={1.8} />
               </span>

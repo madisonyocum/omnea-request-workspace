@@ -12,7 +12,7 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const BASE =
-  'inline-flex shrink-0 items-center justify-center gap-[6px] whitespace-nowrap transition-colors duration-120 disabled:cursor-not-allowed disabled:opacity-55';
+  'inline-flex shrink-0 items-center justify-center gap-[6px] whitespace-nowrap transition-all duration-200 ease-out disabled:cursor-not-allowed disabled:opacity-55';
 
 const SIZES: Record<Size, string> = {
   sm: 'rounded-sm px-[12px] py-[7px] text-[12px] font-medium',

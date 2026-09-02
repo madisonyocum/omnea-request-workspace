@@ -81,11 +81,11 @@ export function DotPill({
   return (
     <span
       className={cn(
-        'inline-flex shrink-0 items-center gap-[6px] rounded-full pl-[9px] pr-[10px] py-[4px] text-[12px] font-medium whitespace-nowrap',
+        'inline-flex shrink-0 items-center gap-[6px] rounded-full pl-[9px] pr-[10px] py-[4px] text-[12px] font-medium whitespace-nowrap transition-colors duration-200',
         TONES[tone],
       )}
     >
-      {dot && <span className={cn('size-[5px] shrink-0 rounded-full', dotColour)} />}
+      {dot && <span className={cn('size-[5px] shrink-0 rounded-full transition-colors duration-200', dotColour)} />}
       {children}
     </span>
   );
