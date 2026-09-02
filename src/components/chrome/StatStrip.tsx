@@ -43,7 +43,7 @@ function Stat({ stat }: { stat: StatItem }) {
         {owner && <Avatar person={owner} size="sm" />}
         <span
           className={cn(
-            'truncate text-[15px] font-medium leading-[1.2]',
+            'truncate text-[16px] font-medium leading-[1.2]',
             stat.tone === 'danger' ? 'text-danger-700' : 'text-text-primary',
           )}
         >

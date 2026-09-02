@@ -17,7 +17,7 @@ export function PhaseRail({
   const accent = ROLE_ACCENT[state.role];
 
   return (
-    <div className="flex w-[320px] shrink-0 flex-col gap-[1px]">
+    <div className="flex w-[320px] shrink-0 flex-col gap-[3px]">
       {stages.map((stage) => {
         const complete = stage.steps.filter((step) => step.status === 'complete').length;
         const viewed = stage.id === viewedStageId;
