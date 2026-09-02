@@ -51,7 +51,7 @@ export function OnboardingModal({ onClose }: { onClose: () => void }) {
           </p>
         </div>
 
-        <div className="grid grid-cols-3 gap-[24px] px-[32px] pb-[16px]">
+        <div className="grid grid-cols-[repeat(3,200px)] gap-[14px] px-[32px] pb-[16px]">
           {POINTS.map(({ Icon, title, body }) => (
             <div key={title} className="flex min-w-0 flex-col items-center gap-[10px]">
               <span className="flex size-[38px] shrink-0 items-center justify-center rounded-full bg-surface-brand-subtle text-brand-600">
@@ -59,7 +59,7 @@ export function OnboardingModal({ onClose }: { onClose: () => void }) {
               </span>
               <div className="flex flex-col items-center gap-[4px]">
                 <span className="text-[13px] font-medium text-text-primary">{title}</span>
-                <p className="text-[11px] leading-[1.5] text-text-tertiary lg:whitespace-nowrap">{body}</p>
+                <p className="text-[11px] leading-[1.5] text-text-tertiary">{body}</p>
               </div>
             </div>
           ))}

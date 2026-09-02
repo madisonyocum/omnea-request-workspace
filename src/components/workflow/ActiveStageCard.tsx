@@ -363,17 +363,14 @@ export function ActiveStageCard({
             </div>
           )}
           {actions.length === 0 && (
-            <>
-              <span className="flex-1" />
-              <button
-                type="button"
-                onClick={() => dispatch({ type: 'step/select', stepId: step.id })}
-                className="flex shrink-0 cursor-pointer items-center gap-[5px] text-[12px] font-medium whitespace-nowrap text-brand-700 hover:underline"
-              >
-                {content.linkLabel}
-                <ChevronRight className="size-[12px]" strokeWidth={2} />
-              </button>
-            </>
+            <button
+              type="button"
+              onClick={() => dispatch({ type: 'step/select', stepId: step.id })}
+              className="flex shrink-0 cursor-pointer items-center gap-[5px] text-[12px] font-medium whitespace-nowrap text-brand-700 hover:underline"
+            >
+              {content.linkLabel}
+              <ChevronRight className="size-[12px]" strokeWidth={2} />
+            </button>
           )}
         </div>
 
