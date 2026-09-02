@@ -4,7 +4,6 @@ import { RequestHeader } from '@/components/chrome/RequestHeader';
 import { StatStrip } from '@/components/chrome/StatStrip';
 import { TabBar } from '@/components/chrome/TabBar';
 import { OnboardingModal } from '@/components/onboarding/OnboardingModal';
-import { WalkthroughGuide } from '@/components/onboarding/WalkthroughGuide';
 import { ToastStack } from '@/components/ui/ToastStack';
 import { StepDrawer } from '@/components/workflow/StepDrawer';
 import { DocumentsView } from '@/views/DocumentsView';
@@ -31,19 +30,10 @@ export default function App() {
 function RequestWorkspace() {
   const { dispatch } = useWorkspace();
   const [showOnboarding, setShowOnboarding] = useState(true);
-  const [tourActive, setTourActive] = useState(false);
 
   return (
     <div className="flex h-screen overflow-hidden bg-surface-canvas">
-      {showOnboarding && (
-        <OnboardingModal
-          onClose={() => setShowOnboarding(false)}
-          onStartTour={() => {
-            setShowOnboarding(false);
-            setTourActive(true);
-          }}
-        />
-      )}
+      {showOnboarding && <OnboardingModal onClose={() => setShowOnboarding(false)} />}
       <AppRail />
 
       <div className="flex min-h-0 min-w-0 flex-1 flex-col">
@@ -61,7 +51,6 @@ function RequestWorkspace() {
       </div>
 
       <StepDrawer onOpenTab={(tab) => dispatch({ type: 'tab/select', tab })} />
-      <WalkthroughGuide active={tourActive} onExit={() => setTourActive(false)} />
       <ToastStack />
     </div>
   );
