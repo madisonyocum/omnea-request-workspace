@@ -55,7 +55,7 @@ export function IntakeView() {
           subtitle={
             <>
               Last edited:{' '}
-              <span className="font-semibold text-text-secondary">
+              <span className="font-medium text-text-secondary">
                 {INTAKE_META.lastEditedAt} by {person(INTAKE_META.lastEditedById).name}
               </span>
             </>
@@ -94,7 +94,7 @@ export function IntakeView() {
           >
             {group.overline && (
               <div className="flex items-start pb-[6px] pt-[26px]">
-                <span className="text-[10px] font-semibold tracking-[0.8px] text-text-muted uppercase">
+                <span className="text-[10px] font-medium tracking-[0.8px] text-text-muted uppercase">
                   {group.overline}
                 </span>
               </div>

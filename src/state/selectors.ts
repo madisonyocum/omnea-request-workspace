@@ -7,7 +7,7 @@ import type {
   WorkflowStage,
   WorkflowStep,
 } from '@/domain/types';
-import { STAT_STRIP } from '@/domain/workflow';
+import { ROLE_STAT, STAT_STRIP } from '@/domain/workflow';
 import { SUBMISSION_FORMS } from '@/domain/submissions';
 import { TASK_FORMS } from '@/domain/tasks';
 import { person } from '@/domain/people';
@@ -38,16 +38,21 @@ export function statStrip(state: WorkspaceState): StatItem[] {
     }
 
     if (stat.id === 'waiting') {
+      // The approver's tile reframes entirely around their own decision.
+      if (state.role === 'approver') return ROLE_STAT.approver;
+
       if (running.length === 0) {
         return { ...stat, value: 'Nobody', caption: 'All stage actions complete', personId: undefined };
       }
       const [first, ...rest] = running;
       const owner = person(first.assigneeId);
+      const roleStat = ROLE_STAT[state.role];
       const suffix = rest.length > 0 ? `+${rest.length} more · ` : '';
       return {
         ...stat,
         value: owner.name,
-        caption: `${suffix}longest 3 days`,
+        caption: state.role === 'admin' ? roleStat.caption : `${suffix}longest 3 days`,
+        captionTone: roleStat.captionTone,
         personId: owner.id,
       };
     }

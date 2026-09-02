@@ -2,6 +2,9 @@
 
 export type TabId = 'overview' | 'tasks' | 'intake' | 'submissions' | 'documents';
 
+/** Who the workspace is currently being previewed as. */
+export type UserRole = 'requester' | 'approver' | 'admin';
+
 export interface Person {
   id: string;
   name: string;
@@ -48,6 +51,10 @@ export interface WorkflowStep {
   pill?: { label: string; tone: 'neutral' | 'danger' | 'success' };
   meta?: StepMeta;
   artefact?: StepArtefact;
+  /** Status text shown beside a sibling step's name in the "also running" list. */
+  lineStatus?: { label: string; tone: 'neutral' | 'danger' };
+  /** Smaller sub-line under a sibling step in the "also running" list. */
+  lineMeta?: string;
   /** Content for the step drawer. */
   detail: {
     summary: string;
@@ -63,10 +70,12 @@ export type StageStatus = 'complete' | 'current' | 'upcoming';
 
 export interface WorkflowStage {
   id: string;
-  /** "STAGE 1" */
+  /** Phase name shown in the rail, e.g. "Approvals". */
   label: string;
   status: StageStatus;
   steps: WorkflowStep[];
+  /** A cross-cutting risk banner shown under the active step, e.g. an open security review. */
+  blocker?: { message: string; linkLabel: string };
 }
 
 /* ---------------------------------------------------------------- activity */
@@ -85,23 +94,6 @@ export interface Comment {
   body: string;
   resolved?: boolean;
   replies: CommentReply[];
-}
-
-/* ------------------------------------------------------------- next action */
-
-export interface ActionChecklistItem {
-  id: string;
-  label: string;
-  state: 'done' | 'attention';
-}
-
-export interface PendingAction {
-  stepId: string;
-  duePill: string;
-  title: string;
-  subtitle: string;
-  checklist: ActionChecklistItem[];
-  attachments: string[];
 }
 
 /* ------------------------------------------------------------------- forms */
@@ -222,6 +214,7 @@ export interface StatItem {
   value: string;
   caption: string;
   tone?: 'default' | 'danger';
+  captionTone?: 'default' | 'danger';
   /** Rendered as the 9-segment stage meter. */
   meter?: { total: number; complete: number; running: number };
   personId?: string;

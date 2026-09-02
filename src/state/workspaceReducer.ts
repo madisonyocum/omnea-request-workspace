@@ -4,12 +4,12 @@ import type {
   DocumentRow,
   DocumentSortKey,
   AnswerFlag,
-  PendingAction,
   TabId,
+  UserRole,
   WorkflowStage,
   WorkflowStep,
 } from '@/domain/types';
-import { INITIAL_COMMENTS, PENDING_ACTION, WORKFLOW_STAGES } from '@/domain/workflow';
+import { INITIAL_COMMENTS, ROLE_VIEWER_ID, WORKFLOW_STAGES } from '@/domain/workflow';
 import { INITIAL_TASK_ANSWERS, TASK_FORMS } from '@/domain/tasks';
 import { INITIAL_DOCUMENTS, SUBMISSION_FORMS } from '@/domain/submissions';
 import { person } from '@/domain/people';
@@ -25,11 +25,11 @@ export interface Toast {
 
 export interface WorkspaceState {
   activeTab: TabId;
+  role: UserRole;
   railNavId: string;
   following: boolean;
   stages: WorkflowStage[];
   comments: Comment[];
-  pendingAction: PendingAction;
   selectedStepId: string | null;
   taskAnswers: AnswerMap;
   activeTaskId: string;
@@ -46,12 +46,15 @@ export interface WorkspaceState {
 
 export type WorkspaceAction =
   | { type: 'tab/select'; tab: TabId }
+  | { type: 'role/select'; role: UserRole }
   | { type: 'rail/select'; id: string }
   | { type: 'following/toggle' }
   | { type: 'step/select'; stepId: string }
   | { type: 'step/close' }
   | { type: 'step/remind'; stepId: string }
   | { type: 'step/reassign'; stepId: string; assigneeId: string }
+  | { type: 'step/decide'; stepId: string; decision: 'approve' | 'decline' | 'override' }
+  | { type: 'step/reopen'; stepId: string }
   | { type: 'comment/add'; body: string }
   | { type: 'comment/reply'; commentId: string; body: string }
   | { type: 'comment/toggle-resolved'; commentId: string }
@@ -70,11 +73,11 @@ export type WorkspaceAction =
 
 export const initialWorkspaceState: WorkspaceState = {
   activeTab: 'overview',
+  role: 'requester',
   railNavId: 'inbox',
   following: true,
   stages: WORKFLOW_STAGES,
   comments: INITIAL_COMMENTS,
-  pendingAction: PENDING_ACTION,
   selectedStepId: null,
   taskAnswers: INITIAL_TASK_ANSWERS,
   activeTaskId: TASK_FORMS[0].id,
@@ -134,6 +137,9 @@ export function workspaceReducer(state: WorkspaceState, action: WorkspaceAction)
   switch (action.type) {
     case 'tab/select':
       return { ...state, activeTab: action.tab };
+
+    case 'role/select':
+      return { ...state, role: action.role, activeTab: 'overview' };
 
     case 'rail/select':
       return { ...state, railNavId: action.id };
@@ -196,10 +202,83 @@ export function workspaceReducer(state: WorkspaceState, action: WorkspaceAction)
       );
     }
 
+    case 'step/decide': {
+      const step = findStep(state.stages, action.stepId);
+      if (!step) return state;
+      const actor = person(ROLE_VIEWER_ID[state.role]).name;
+
+      if (action.decision === 'decline') {
+        return withToast(
+          {
+            ...state,
+            stages: mapStep(state.stages, action.stepId, (current) => ({
+              ...current,
+              status: 'declined',
+              detail: {
+                ...current.detail,
+                history: [...current.detail.history, { at: `${TODAY}, 12:34`, label: 'Declined', actor }],
+              },
+            })),
+          },
+          `${step.name} declined`,
+          'danger',
+        );
+      }
+
+      const decisionLabel = action.decision === 'override' ? 'Overridden & advanced' : 'Approved';
+      const decidedStages = mapStep(state.stages, action.stepId, (current) => ({
+        ...current,
+        status: 'complete',
+        detail: {
+          ...current.detail,
+          history: [...current.detail.history, { at: `${TODAY}, 12:34`, label: decisionLabel, actor }],
+        },
+      }));
+
+      const stageIndex = decidedStages.findIndex((stage) => stage.steps.some((s) => s.id === action.stepId));
+      const stage = decidedStages[stageIndex];
+      const stageComplete = stage.steps.every((s) => s.status === 'complete');
+      const stages: WorkflowStage[] = stageComplete
+        ? decidedStages.map((s, index) =>
+            index === stageIndex
+              ? { ...s, status: 'complete' as const }
+              : index === stageIndex + 1
+                ? { ...s, status: 'current' as const }
+                : s,
+          )
+        : decidedStages;
+
+      const decisionVerb = action.decision === 'override' ? 'overridden & advanced' : 'approved';
+      return withToast(
+        { ...state, stages },
+        stageComplete ? `${step.name} ${decisionVerb} — ${stage.label} complete` : `${step.name} ${decisionVerb}`,
+        'success',
+      );
+    }
+
+    case 'step/reopen': {
+      const step = findStep(state.stages, action.stepId);
+      if (!step) return state;
+      return withToast(
+        {
+          ...state,
+          stages: mapStep(state.stages, action.stepId, (current) => ({
+            ...current,
+            status: 'active',
+            detail: {
+              ...current.detail,
+              history: [...current.detail.history, { at: `${TODAY}, 12:34`, label: 'Reopened for decision', actor: person(ROLE_VIEWER_ID[state.role]).name }],
+            },
+          })),
+        },
+        `${step.name} reopened`,
+      );
+    }
+
     case 'comment/add': {
       const comment: Comment = {
         id: nextId('comment'),
-        authorId: 'me',
+        authorId: ROLE_VIEWER_ID[state.role],
         timestamp: 'Just now',
         body: action.body,
         replies: [],
@@ -216,7 +295,7 @@ export function workspaceReducer(state: WorkspaceState, action: WorkspaceAction)
                 ...comment,
                 replies: [
                   ...comment.replies,
-                  { id: nextId('reply'), authorId: 'me', timestamp: 'Just now', body: action.body },
+                  { id: nextId('reply'), authorId: ROLE_VIEWER_ID[state.role], timestamp: 'Just now', body: action.body },
                 ],
               }
             : comment,

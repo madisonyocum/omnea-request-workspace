@@ -27,6 +27,8 @@
   --color-surface-sunken: #f2f4f7;
   --color-surface-canvas: #f6f7f9;
   --color-surface-brand-subtle: #f2f0fe;
+  --color-surface-brand-tint: #f4f1fe;
+  --color-surface-rail-active: #2e2f33;
 
   /* borders */
   --color-border-subtle: #edeff3;
@@ -49,6 +51,7 @@
   --color-warning-700: #93370d;
   --color-danger-100: #fee4e2;
   --color-danger-500: #f04438;
+  --color-danger-600: #d92d20;
   --color-danger-700: #b42318;
 
   /* accents (avatar palette) */

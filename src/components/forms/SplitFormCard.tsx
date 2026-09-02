@@ -51,7 +51,7 @@ export function SplitFormCard({
         {groups.map((group) => (
           <div key={group.id}>
             <div className="flex items-start px-[18px] pb-[10px] pt-[16px]">
-              <span className="text-[10px] font-semibold tracking-[0.8px] text-text-muted uppercase">
+              <span className="text-[10px] font-medium tracking-[0.8px] text-text-muted uppercase">
                 {group.overline}
               </span>
             </div>
@@ -72,7 +72,7 @@ export function SplitFormCard({
                   <span className="flex min-w-0 flex-1 flex-col gap-[4px]">
                     <span
                       className={cn(
-                        'truncate text-[13px] font-semibold',
+                        'truncate text-[13px] font-medium',
                         active ? 'text-brand-700' : 'text-text-primary',
                       )}
                     >
@@ -98,7 +98,7 @@ export function SplitFormCard({
                       className="flex shrink-0 items-center gap-[3px] rounded-xs bg-warning-100 px-[5px] py-[3px]"
                     >
                       <Flag className="size-[10px] text-warning-700" strokeWidth={2} />
-                      <span className="text-[9px] font-semibold text-warning-700">{item.flagCount}</span>
+                      <span className="text-[9px] font-medium text-warning-700">{item.flagCount}</span>
                     </span>
                   )}
                 </button>
@@ -138,7 +138,7 @@ export function FormHeader({
       )}
     >
       <div className="flex min-w-0 flex-1 flex-col gap-[4px]">
-        <h2 className="truncate text-[16px] font-semibold text-text-primary">{title}</h2>
+        <h2 className="truncate text-[16px] font-medium text-text-primary">{title}</h2>
         {subtitle && <div className="truncate text-[11px] text-text-muted">{subtitle}</div>}
       </div>
       {children}

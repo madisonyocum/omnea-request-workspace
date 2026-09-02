@@ -38,12 +38,12 @@ function Stat({ stat }: { stat: StatItem }) {
 
   return (
     <div className="flex min-w-0 shrink-0 flex-col gap-[4px] pr-[6px]">
-      <span className="text-[10px] font-semibold tracking-[0.8px] text-text-muted uppercase">{stat.label}</span>
+      <span className="text-[10px] font-medium tracking-[0.8px] text-text-muted uppercase">{stat.label}</span>
       <div className="flex items-center gap-[8px]">
         {owner && <Avatar person={owner} size="sm" />}
         <span
           className={cn(
-            'truncate text-[15px] font-semibold leading-[1.2]',
+            'truncate text-[15px] font-medium leading-[1.2]',
             stat.tone === 'danger' ? 'text-danger-700' : 'text-text-primary',
           )}
         >
@@ -51,7 +51,14 @@ function Stat({ stat }: { stat: StatItem }) {
         </span>
         {stat.meter && <StageMeter {...stat.meter} />}
       </div>
-      <p className="truncate text-[11px] leading-[1.2] text-text-muted">{stat.caption}</p>
+      <p
+        className={cn(
+          'truncate text-[11px] leading-[1.2]',
+          stat.captionTone === 'danger' ? 'text-danger-600' : 'text-text-muted',
+        )}
+      >
+        {stat.caption}
+      </p>
     </div>
   );
 }

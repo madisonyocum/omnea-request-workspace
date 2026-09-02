@@ -1,7 +1,7 @@
 import type { ButtonHTMLAttributes, ReactNode } from 'react';
 import { cn } from '@/lib/cn';
 
-type Variant = 'primary' | 'secondary' | 'ghost';
+type Variant = 'primary' | 'secondary' | 'ghost' | 'dark';
 type Size = 'sm' | 'md';
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
@@ -16,7 +16,7 @@ const BASE =
 
 const SIZES: Record<Size, string> = {
   sm: 'rounded-sm px-[12px] py-[7px] text-[12px] font-medium',
-  md: 'rounded-md px-[20px] py-[10px] text-[13px] font-semibold',
+  md: 'rounded-md px-[20px] py-[10px] text-[13px] font-medium',
 };
 
 const VARIANTS: Record<Variant, string> = {
@@ -25,6 +25,8 @@ const VARIANTS: Record<Variant, string> = {
   secondary:
     'border border-border-strong bg-surface-card text-text-secondary hover:bg-surface-subtle active:bg-surface-sunken',
   ghost: 'text-text-tertiary hover:bg-surface-sunken hover:text-text-secondary',
+  /** The workflow card's own primary action — ink, not brand purple, so it doesn't compete with links. */
+  dark: 'bg-surface-rail-active text-white hover:bg-[#232428] active:bg-[#232428]',
 };
 
 export function Button({ variant = 'secondary', size = 'sm', icon, children, className, ...rest }: ButtonProps) {

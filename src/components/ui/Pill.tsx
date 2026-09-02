@@ -28,7 +28,7 @@ export function Badge({
   return (
     <span
       className={cn(
-        'inline-flex shrink-0 items-center rounded-[6px] font-semibold whitespace-nowrap',
+        'inline-flex shrink-0 items-center rounded-[6px] font-medium whitespace-nowrap',
         size === 'md' ? 'px-[8px] py-[2.5px] text-[10px] tracking-[0.5px]' : 'px-[7px] py-[2px] text-[9px]',
         TONES[tone],
         className,
@@ -50,7 +50,7 @@ export function StatusPill({
   return (
     <span
       className={cn(
-        'inline-flex shrink-0 items-center rounded-[5px] px-[6px] py-[2px] text-[10px] font-semibold tracking-[0.5px] whitespace-nowrap',
+        'inline-flex shrink-0 items-center rounded-[5px] px-[6px] py-[2px] text-[10px] font-medium tracking-[0.5px] whitespace-nowrap',
         TONES[tone],
       )}
     >
@@ -81,7 +81,7 @@ export function DotPill({
   return (
     <span
       className={cn(
-        'inline-flex shrink-0 items-center gap-[6px] rounded-full pl-[9px] pr-[10px] py-[4px] text-[12px] font-semibold whitespace-nowrap',
+        'inline-flex shrink-0 items-center gap-[6px] rounded-full pl-[9px] pr-[10px] py-[4px] text-[12px] font-medium whitespace-nowrap',
         TONES[tone],
       )}
     >
@@ -94,7 +94,7 @@ export function DotPill({
 /** Table cell tag — "SOC2", "Contract". */
 export function Tag({ children }: { children: ReactNode }) {
   return (
-    <span className="inline-flex shrink-0 items-center rounded-xs bg-surface-sunken px-[9px] py-[3px] text-[12px] font-semibold text-text-tertiary whitespace-nowrap">
+    <span className="inline-flex shrink-0 items-center rounded-xs bg-surface-sunken px-[9px] py-[3px] text-[12px] font-medium text-text-tertiary whitespace-nowrap">
       {children}
     </span>
   );
@@ -105,8 +105,8 @@ export function CountChip({ children, active }: { children: ReactNode; active?: 
   return (
     <span
       className={cn(
-        'inline-flex shrink-0 items-center rounded-[6px] px-[6px] py-px text-[10px] font-semibold tracking-[0.5px]',
-        active ? 'bg-surface-brand-subtle text-brand-600' : 'bg-surface-sunken text-text-tertiary',
+        'inline-flex shrink-0 items-center rounded-[6px] px-[6px] py-px text-[10px] font-medium tracking-[0.5px]',
+        active ? 'bg-surface-sunken text-text-primary' : 'bg-surface-sunken text-text-tertiary',
       )}
     >
       {children}

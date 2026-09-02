@@ -55,7 +55,7 @@ export function DocumentsView() {
     <section className="flex h-full min-h-0 flex-col overflow-hidden rounded-lg border border-border-card bg-surface-card">
       <div className="flex shrink-0 flex-col gap-[10px] px-[24px] pb-[18px] pt-[20px]">
         <div className="flex items-start justify-between">
-          <h2 className="text-[16px] font-semibold text-text-primary">Documents</h2>
+          <h2 className="text-[16px] font-medium text-text-primary">Documents</h2>
           <div className="flex items-start gap-[10px]">
             <Button onClick={() => dispatch({ type: 'toast/show', message: 'Custom fields are managed by admins' })}>
               Add field
@@ -138,7 +138,7 @@ function HeaderCell({ column }: { column: Column }) {
   const { state, dispatch } = useWorkspace();
   const active = column.sortKey !== undefined && state.documentSort?.key === column.sortKey;
   const classes =
-    'flex min-w-0 items-center gap-[4px] pr-[10px] text-[10px] font-semibold tracking-[0.8px] text-text-muted uppercase';
+    'flex min-w-0 items-center gap-[4px] pr-[10px] text-[10px] font-medium tracking-[0.8px] text-text-muted uppercase';
 
   if (!column.sortKey) {
     return <span className={classes}>{column.label}</span>;

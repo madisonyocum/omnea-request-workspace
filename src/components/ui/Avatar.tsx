@@ -22,7 +22,7 @@ export function Avatar({ person, size = 'sm', ringed = false, className }: Avata
   return (
     <span
       className={cn(
-        'inline-flex shrink-0 select-none items-center justify-center rounded-full font-semibold leading-none text-white',
+        'inline-flex shrink-0 select-none items-center justify-center rounded-full font-bold leading-none text-white',
         SIZES[size],
         ringed && 'ring-2 ring-surface-card',
         className,

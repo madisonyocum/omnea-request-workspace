@@ -15,15 +15,24 @@ import { Badge } from '@/components/ui/Pill';
 import { Button, IconButton } from '@/components/ui/Button';
 import { Menu } from '@/components/ui/Menu';
 import { Modal } from '@/components/ui/Modal';
-import { PEOPLE, WATCHER_IDS, person } from '@/domain/people';
-import { REQUEST } from '@/domain/workflow';
+import { SegmentedControl } from '@/components/ui/SegmentedControl';
+import { WATCHER_IDS, person } from '@/domain/people';
+import { REQUEST, ROLE_LABEL, ROLE_VIEWER_ID } from '@/domain/workflow';
+import type { UserRole } from '@/domain/types';
 import { useWorkspace } from '@/state/workspaceContext';
 import { cn } from '@/lib/cn';
+
+const ROLE_OPTIONS: { value: UserRole; label: string }[] = [
+  { value: 'requester', label: 'Requester' },
+  { value: 'approver', label: 'Approver' },
+  { value: 'admin', label: 'Admin' },
+];
 
 export function RequestHeader() {
   const { state, dispatch } = useWorkspace();
   const [shareOpen, setShareOpen] = useState(false);
   const watchers = WATCHER_IDS.map(person);
+  const viewer = person(ROLE_VIEWER_ID[state.role]);
 
   return (
     <div className="flex items-center gap-[10px] bg-surface-card px-[24px] pt-[12px] pb-[16px]">
@@ -33,7 +42,7 @@ export function RequestHeader() {
 
       <div className="flex min-w-0 flex-col gap-[5px]">
         <div className="mt-[3px] flex items-center gap-[8px]">
-          <h1 className="text-[16px] font-semibold leading-[1.15] text-text-primary">{REQUEST.supplier}</h1>
+          <h1 className="text-[16px] font-medium leading-[1.15] text-text-primary">{REQUEST.supplier}</h1>
           <span className="text-[12px] font-medium whitespace-nowrap text-text-muted">{REQUEST.reference}</span>
           <Badge tone="danger" size="sm">{REQUEST.riskBadge}</Badge>
         </div>
@@ -43,6 +52,13 @@ export function RequestHeader() {
       <div className="flex-1" />
 
       <AvatarStack people={watchers} />
+
+      <SegmentedControl
+        value={state.role}
+        options={ROLE_OPTIONS}
+        onChange={(role) => dispatch({ type: 'role/select', role })}
+        className="mr-[4px]"
+      />
 
       <Button
         onClick={() => dispatch({ type: 'following/toggle' })}
@@ -110,8 +126,8 @@ export function RequestHeader() {
         width={190}
         header={
           <div className="flex flex-col gap-[2px]">
-            <span className="text-[12px] font-semibold text-text-primary">{PEOPLE.me.name}</span>
-            <span className="text-[11px] text-text-muted">alex.green@acme.co</span>
+            <span className="text-[12px] font-medium text-text-primary">{viewer.name}</span>
+            <span className="text-[11px] text-text-muted">Viewing as {ROLE_LABEL[state.role].toLowerCase()}</span>
           </div>
         }
         items={[
@@ -129,8 +145,8 @@ export function RequestHeader() {
               open && 'bg-surface-subtle',
             )}
           >
-            <Avatar person={PEOPLE.me} size="lg" />
-            <span className="text-[12px] font-medium text-text-secondary">{PEOPLE.me.jobTitle}</span>
+            <Avatar person={viewer} size="lg" />
+            <span className="text-[12px] font-medium text-text-secondary">{ROLE_LABEL[state.role]}</span>
             <ChevronDown
               className={cn('size-[12px] text-text-muted transition-transform duration-150', open && 'rotate-180')}
               strokeWidth={2.2}
@@ -188,14 +204,14 @@ function ShareModal({ onClose }: { onClose: () => void }) {
         </div>
 
         <div className="flex flex-col gap-[8px]">
-          <span className="text-[10px] font-semibold tracking-[0.8px] text-text-muted uppercase">
+          <span className="text-[10px] font-medium tracking-[0.8px] text-text-muted uppercase">
             People with access
           </span>
           {watchers.map((watcher) => (
             <div key={watcher.id} className="flex items-center gap-[10px]">
               <Avatar person={watcher} size="md" />
               <div className="flex min-w-0 flex-1 flex-col">
-                <span className="truncate text-[12px] font-semibold text-text-primary">{watcher.name}</span>
+                <span className="truncate text-[12px] font-medium text-text-primary">{watcher.name}</span>
                 <span className="truncate text-[11px] text-text-muted">{watcher.jobTitle}</span>
               </div>
               <span className="text-[11px] text-text-muted">Can comment</span>

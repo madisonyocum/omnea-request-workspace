@@ -1,4 +1,4 @@
-import type { Comment, PendingAction, RequestSummary, StatItem, WorkflowStage } from './types';
+import type { Comment, RequestSummary, StatItem, UserRole, WorkflowStage } from './types';
 
 export const REQUEST: RequestSummary = {
   supplier: 'Mailchimp',
@@ -31,14 +31,14 @@ export const STAT_STRIP: StatItem[] = [
 
 export const WORKFLOW_META = {
   type: 'New purchase',
-  stageLabel: 'Stage 3 of 6',
+  stageLabel: 'Phase 3 of 6 · Stage 3 of 13',
   updatedLabel: 'Updated 6 Jun, 12:34',
 };
 
 export const WORKFLOW_STAGES: WorkflowStage[] = [
   {
     id: 'stage-1',
-    label: 'Stage 1',
+    label: 'Intake',
     status: 'complete',
     steps: [
       {
@@ -65,7 +65,7 @@ export const WORKFLOW_STAGES: WorkflowStage[] = [
   },
   {
     id: 'stage-2',
-    label: 'Stage 2',
+    label: 'Procurement',
     status: 'complete',
     steps: [
       {
@@ -95,8 +95,9 @@ export const WORKFLOW_STAGES: WorkflowStage[] = [
   },
   {
     id: 'stage-3',
-    label: 'Stage 3',
+    label: 'Approvals',
     status: 'current',
+    blocker: { message: 'Security review not started · 2 high risks', linkLabel: 'Open risks' },
     steps: [
       {
         id: 'manager-approval',
@@ -114,7 +115,12 @@ export const WORKFLOW_STAGES: WorkflowStage[] = [
             { at: '27 May, 11:06', label: 'Assigned to Martha Nelson', actor: 'Automation' },
             { at: '30 May, 08:00', label: 'Reminder sent', actor: 'Automation' },
           ],
-          attachments: [{ name: 'Business case.pdf', size: '640 KB' }],
+          attachments: [
+            { name: 'Approval form', size: '128 KB' },
+            { name: 'Budget request', size: '64 KB' },
+            { name: 'Business case.pdf', size: '640 KB' },
+            { name: 'Vendor quote.pdf', size: '212 KB' },
+          ],
         },
         actions: ['remind', 'reassign', 'open-form'],
       },
@@ -122,7 +128,9 @@ export const WORKFLOW_STAGES: WorkflowStage[] = [
         id: 'budget-approval',
         name: 'Budget approval',
         assigneeId: 'jaslyn',
-        status: 'waiting',
+        status: 'overdue',
+        lineStatus: { label: '2 days overdue · blocking PO', tone: 'danger' },
+        lineMeta: 'Due 29 May · 4 days in stage · £48,000 · Last nudged 1 Jun · 3 files',
         detail: {
           summary: 'Finance confirms the spend sits inside the approved FY26 marketing envelope.',
           slaLabel: 'Requested 2 days ago · SLA 2 days',
@@ -137,11 +145,26 @@ export const WORKFLOW_STAGES: WorkflowStage[] = [
         },
         actions: ['approve', 'remind', 'reassign'],
       },
+      {
+        id: 'legal-review',
+        name: 'Legal review',
+        assigneeId: 'angelina',
+        status: 'waiting',
+        lineStatus: { label: 'Not started · waiting on DPA', tone: 'neutral' },
+        lineMeta: 'Queued behind Budget approval · Est. 3 days · DPA requested 1 Jun · 1 file',
+        detail: {
+          summary: 'Legal review of the MSA and DPA, including the data retention clause raised by Robert Fox.',
+          slaLabel: 'Not started · SLA 5 days',
+          history: [{ at: '27 May, 11:06', label: 'Queued behind Budget approval', actor: 'Automation' }],
+          attachments: [{ name: 'Mailchimp - Contract-v3.pdf', size: '820 KB' }],
+        },
+        actions: ['remind'],
+      },
     ],
   },
   {
     id: 'stage-4',
-    label: 'Stage 4',
+    label: 'Reviews',
     status: 'upcoming',
     steps: [
       {
@@ -160,18 +183,6 @@ export const WORKFLOW_STAGES: WorkflowStage[] = [
         actions: ['open-form'],
       },
       {
-        id: 'legal-review',
-        name: 'Legal review',
-        assigneeId: 'angelina',
-        status: 'waiting',
-        detail: {
-          summary: 'Legal review of the MSA and DPA, including the data retention clause raised by Robert Fox.',
-          slaLabel: 'Not started · SLA 5 days',
-          history: [{ at: '27 May, 11:06', label: 'Queued behind Stage 3', actor: 'Automation' }],
-          attachments: [{ name: 'Mailchimp - Contract-v3.pdf', size: '820 KB' }],
-        },
-      },
-      {
         id: 'finance-review',
         name: 'Finance review',
         assigneeId: 'curtis',
@@ -187,7 +198,7 @@ export const WORKFLOW_STAGES: WorkflowStage[] = [
   },
   {
     id: 'stage-5',
-    label: 'Stage 5',
+    label: 'Engagement',
     status: 'upcoming',
     steps: [
       {
@@ -209,7 +220,7 @@ export const WORKFLOW_STAGES: WorkflowStage[] = [
   },
   {
     id: 'stage-6',
-    label: 'Stage 6',
+    label: 'Purchase order',
     status: 'upcoming',
     steps: [
       {
@@ -231,16 +242,126 @@ export const WORKFLOW_STAGES: WorkflowStage[] = [
   },
 ];
 
-export const PENDING_ACTION: PendingAction = {
-  stepId: 'budget-approval',
-  duePill: 'Due in 2 days',
-  title: 'Waiting on manager approval',
-  subtitle: 'You sent a request 2 days ago to Jaslyn Moore',
-  checklist: [
-    { id: 'sent', label: 'Sent to your manager', state: 'done' },
-    { id: 'security', label: 'Security review not started · 2 high risks', state: 'attention' },
-  ],
-  attachments: ['Pricing schedule.xlsx', 'MSA v3.2.pdf'],
+/* -------------------------------------------------------------- user roles */
+
+export const ROLE_LABEL: Record<UserRole, string> = {
+  requester: 'Requester',
+  approver: 'Approver',
+  admin: 'Admin',
+};
+
+/** Who "you" are while previewing each role. */
+export const ROLE_VIEWER_ID: Record<UserRole, string> = {
+  requester: 'me',
+  approver: 'martha',
+  admin: 'me',
+};
+
+export const ROLE_TASKS_TAB: Record<UserRole, { label: string }> = {
+  requester: { label: 'My tasks' },
+  approver: { label: 'My approvals' },
+  admin: { label: 'Queue' },
+};
+
+/** Approver/admin queues aren't backed by real per-request data — flavour counts only. */
+export const ROLE_TASKS_COUNT: Partial<Record<UserRole, number>> = {
+  approver: 3,
+  admin: 12,
+};
+
+/** The 5th stat-strip tile, which reframes around what the viewer needs to know. */
+export const ROLE_STAT: Record<UserRole, StatItem> = {
+  requester: {
+    id: 'waiting',
+    label: 'Waiting on',
+    value: 'Martha Nelson',
+    caption: '+1 more · longest 3 days',
+    personId: 'martha',
+  },
+  approver: {
+    id: 'decision',
+    label: 'Your decision',
+    value: 'Approval needed',
+    caption: 'Sent by Ben Williams',
+  },
+  admin: {
+    id: 'waiting',
+    label: 'Waiting on',
+    value: 'Martha Nelson',
+    caption: 'SLA breach in 1 day',
+    captionTone: 'danger',
+    personId: 'martha',
+  },
+};
+
+export interface RoleActionButton {
+  label: string;
+  variant: 'dark' | 'secondary';
+  kind: 'remind' | 'reassign' | 'approve' | 'decline' | 'override' | 'reopen';
+}
+
+export interface RoleActiveCardContent {
+  duePill: string;
+  contextLabel: string;
+  body: string;
+  meta: { personId: string; caption: string };
+  actions: RoleActionButton[];
+  linkLabel: string;
+  policyBanner?: { message: string; linkLabel: string };
+}
+
+/** How the current step of the Approvals phase reads for each viewer. */
+export const ROLE_ACTIVE_CARD: Record<UserRole, RoleActiveCardContent> = {
+  requester: {
+    duePill: 'Due in 2 days',
+    contextLabel: 'APPROVALS · STAGE 1 OF 3',
+    body: 'Waiting on Martha Nelson. You sent the request 2 days ago.',
+    meta: { personId: 'martha', caption: 'Due 1 Jun · 3 days in stage' },
+    actions: [
+      { label: 'Send reminder', variant: 'dark', kind: 'remind' },
+      { label: 'Reassign approver', variant: 'secondary', kind: 'reassign' },
+    ],
+    linkLabel: 'More details',
+  },
+  approver: {
+    duePill: 'Needs your decision',
+    contextLabel: 'YOUR LINE · APPROVALS · STAGE 1 OF 3',
+    body: 'Ben Williams sent this to you on 4 Jun. Approving here unblocks Budget approval and the purchase order.',
+    meta: { personId: 'ben', caption: 'Requested 4 Jun · Waiting 2 days' },
+    actions: [
+      { label: 'Approve request', variant: 'dark', kind: 'approve' },
+      { label: 'Decline', variant: 'secondary', kind: 'decline' },
+    ],
+    linkLabel: 'More details',
+  },
+  admin: {
+    duePill: 'Due in 2 days',
+    contextLabel: 'APPROVALS · STAGE 1 OF 3',
+    body: 'Waiting on Martha Nelson for 3 days. The 3-day approval SLA breaches tomorrow at 12:00.',
+    meta: { personId: 'martha', caption: 'Due 1 Jun · 3 days in stage · SLA 3 days' },
+    actions: [
+      { label: 'Send reminder', variant: 'dark', kind: 'remind' },
+      { label: 'Reassign approver', variant: 'secondary', kind: 'reassign' },
+      { label: 'Override & advance', variant: 'secondary', kind: 'override' },
+    ],
+    linkLabel: 'Audit trail',
+    policyBanner: {
+      message: 'Policy · 3-day approval SLA, auto-escalates to Priya Raman on breach',
+      linkLabel: 'Edit rule',
+    },
+  },
+};
+
+export interface RoleAlsoRunningContent {
+  heading: string;
+  /** Approvers only view the other lines; requesters and admins can act on them. */
+  viewOnly: boolean;
+}
+
+export const ROLE_ALSO_RUNNING: Record<UserRole, RoleAlsoRunningContent> = {
+  requester: { heading: 'ALSO RUNNING IN THIS PHASE', viewOnly: false },
+  approver: { heading: 'OTHER LINES IN THIS PHASE · VIEW ONLY', viewOnly: true },
+  admin: { heading: 'ALL LINES IN THIS PHASE · YOU CAN OVERRIDE', viewOnly: false },
 };
 
 export const INITIAL_COMMENTS: Comment[] = [

@@ -38,11 +38,11 @@ export function Drawer({ title, subtitle, eyebrow, onClose, footer, children }: 
         <header className="flex items-start gap-[12px] border-b border-border-subtle px-[22px] pb-[16px] pt-[20px]">
           <div className="flex min-w-0 flex-1 flex-col gap-[6px]">
             {eyebrow && (
-              <span className="text-[10px] font-semibold tracking-[0.8px] text-text-muted uppercase">
+              <span className="text-[10px] font-medium tracking-[0.8px] text-text-muted uppercase">
                 {eyebrow}
               </span>
             )}
-            <h2 className="text-[16px] font-semibold text-text-primary">{title}</h2>
+            <h2 className="text-[16px] font-medium text-text-primary">{title}</h2>
             {subtitle}
           </div>
           <button

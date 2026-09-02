@@ -5,7 +5,8 @@ import { cn } from '@/lib/cn';
 import { Avatar } from '@/components/ui/Avatar';
 import { Badge } from '@/components/ui/Pill';
 import { Button } from '@/components/ui/Button';
-import { PEOPLE, person } from '@/domain/people';
+import { person } from '@/domain/people';
+import { ROLE_VIEWER_ID } from '@/domain/workflow';
 import type { Comment } from '@/domain/types';
 import { useWorkspace } from '@/state/workspaceContext';
 
@@ -18,33 +19,29 @@ export function ActivityCard() {
     setOpenThreads((current) => (current.includes(id) ? current.filter((v) => v !== id) : [...current, id]));
 
   return (
-    <section className="flex h-full min-h-0 flex-col rounded-lg border border-border-card bg-surface-card">
-      <header className="flex shrink-0 items-center gap-[8px] px-[24px] pt-[16px]">
-        <h2 className="text-[16px] font-semibold text-text-primary">Activity</h2>
+    <section className="flex shrink-0 flex-col gap-[18px] rounded-[14px] border border-border-default bg-surface-card px-[24px] py-[20px]">
+      <header className="flex items-center gap-[8px]">
+        <h2 className="text-[13px] font-medium text-text-primary">Activity</h2>
         <div className="flex-1" />
-        <span className="text-[12px] text-text-muted">
+        <span className="text-[9px] font-medium text-text-tertiary">
           {state.comments.length} comments · {resolvedCount} resolved
         </span>
       </header>
 
-      <div className="shrink-0 px-[24px] pt-[12px]">
-        <Composer
-          placeholder="Add a comment, or type @ to mention someone"
-          onSubmit={(body) => dispatch({ type: 'comment/add', body })}
-        />
-      </div>
+      <Composer
+        placeholder="Add a comment, or type @ to mention someone"
+        onSubmit={(body) => dispatch({ type: 'comment/add', body })}
+      />
 
-      <div className="scrollbar-slim min-h-0 flex-1 overflow-y-auto px-[24px] pb-[14px] pt-[14px]">
-        <div className="flex flex-col gap-[16px]">
-          {state.comments.map((comment) => (
-            <CommentRow
-              key={comment.id}
-              comment={comment}
-              expanded={openThreads.includes(comment.id)}
-              onToggleThread={() => toggleThread(comment.id)}
-            />
-          ))}
-        </div>
+      <div className="flex flex-col gap-[16px]">
+        {state.comments.map((comment) => (
+          <CommentRow
+            key={comment.id}
+            comment={comment}
+            expanded={openThreads.includes(comment.id)}
+            onToggleThread={() => toggleThread(comment.id)}
+          />
+        ))}
       </div>
     </section>
   );
@@ -68,7 +65,7 @@ function CommentRow({
       <Avatar person={author} size="xl" />
       <div className="flex min-w-0 flex-1 flex-col gap-[4px]">
         <div className="flex items-center gap-[8px]">
-          <span className="text-[13px] font-semibold text-text-primary">{author.name}</span>
+          <span className="text-[13px] font-medium text-text-primary">{author.name}</span>
           <span className="text-[11px] text-text-muted">{comment.timestamp}</span>
           {comment.resolved && (
             <Badge tone="success" size="sm">
@@ -116,7 +113,7 @@ function CommentRow({
                   <Avatar person={replyAuthor} size="md" />
                   <div className="flex min-w-0 flex-1 flex-col gap-[3px]">
                     <div className="flex items-center gap-[8px]">
-                      <span className="text-[12px] font-semibold text-text-primary">{replyAuthor.name}</span>
+                      <span className="text-[12px] font-medium text-text-primary">{replyAuthor.name}</span>
                       <span className="text-[11px] text-text-muted">{reply.timestamp}</span>
                     </div>
                     <p className="text-[12px] leading-[1.45] text-text-secondary">{reply.body}</p>
@@ -148,9 +145,11 @@ function Composer({
   compact?: boolean;
   icon?: ReactNode;
 }) {
+  const { state } = useWorkspace();
   const [value, setValue] = useState('');
   const [focused, setFocused] = useState(false);
   const canSubmit = value.trim().length > 0;
+  const viewer = person(ROLE_VIEWER_ID[state.role]);
 
   const submit = () => {
     if (!canSubmit) return;
@@ -164,7 +163,7 @@ function Composer({
       {compact ? (
         <span className="mt-[9px] flex size-[24px] shrink-0 items-center justify-center">{icon}</span>
       ) : (
-        <Avatar person={PEOPLE.me} size="xl" />
+        <Avatar person={viewer} size="xl" />
       )}
       <div className="flex min-w-0 flex-1 flex-col gap-[8px]">
         <div

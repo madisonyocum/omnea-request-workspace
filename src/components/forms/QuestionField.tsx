@@ -30,7 +30,7 @@ export function QuestionField({
   return (
     <div className={cn('flex flex-col gap-[12px] py-[18px]', className)}>
       <div className="flex items-start gap-[8px]">
-        <p className="min-w-0 flex-1 text-[13px] font-semibold leading-[1.35] text-text-primary">
+        <p className="min-w-0 flex-1 text-[13px] font-medium leading-[1.35] text-text-primary">
           {question.label}
           {question.required && <span className="text-danger-500"> *</span>}
         </p>

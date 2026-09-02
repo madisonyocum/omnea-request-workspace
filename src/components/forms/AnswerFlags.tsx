@@ -103,7 +103,7 @@ export function FlagSummary({
       <div className="flex items-center gap-[10px]">
         <Flag className="size-[14px] shrink-0 text-warning-600" strokeWidth={2.2} />
         <div className="flex min-w-0 flex-1 flex-col gap-[2px]">
-          <p className="text-[13px] font-semibold text-warning-700">
+          <p className="text-[13px] font-medium text-warning-700">
             {flags.length} {flags.length === 1 ? 'flag' : 'flags'} open on this form
             {blockers > 0 && ` · ${blockers} blocking`}
           </p>
@@ -130,7 +130,7 @@ export function FlagSummary({
             >
               <Avatar person={person(flag.raisedById)} size="sm" />
               <span className="min-w-0 flex-1 text-[11px] leading-[1.45] text-text-secondary">
-                <span className="font-semibold text-text-primary group-hover:underline">
+                <span className="font-medium text-text-primary group-hover:underline">
                   {questionLabel(flag.questionId)}
                 </span>{' '}
                 — {flag.reason}
@@ -183,7 +183,7 @@ export function RaiseFlagModal({
     >
       <div className="flex flex-col gap-[12px] pb-[6px]">
         <div className="flex flex-col gap-[8px]">
-          <span className="text-[12px] font-semibold text-text-primary">Severity</span>
+          <span className="text-[12px] font-medium text-text-primary">Severity</span>
           <div className="flex gap-[8px]">
             {(['query', 'blocker'] as const).map((option) => (
               <button
@@ -191,7 +191,7 @@ export function RaiseFlagModal({
                 type="button"
                 onClick={() => setSeverity(option)}
                 className={cn(
-                  'flex-1 cursor-pointer rounded-sm border px-[12px] py-[9px] text-[12px] font-semibold capitalize transition-colors duration-120',
+                  'flex-1 cursor-pointer rounded-sm border px-[12px] py-[9px] text-[12px] font-medium capitalize transition-colors duration-120',
                   severity === option
                     ? 'border-brand-300 bg-surface-brand-subtle text-brand-700'
                     : 'border-border-default bg-surface-subtle text-text-secondary hover:bg-surface-sunken',
@@ -204,7 +204,7 @@ export function RaiseFlagModal({
         </div>
 
         <label className="flex flex-col gap-[8px]">
-          <span className="text-[12px] font-semibold text-text-primary">What needs to change</span>
+          <span className="text-[12px] font-medium text-text-primary">What needs to change</span>
           <textarea
             autoFocus
             rows={4}

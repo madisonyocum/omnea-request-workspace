@@ -37,7 +37,7 @@ export function Modal({ title, description, onClose, footer, children, width = 4
       >
         <div className="flex items-start gap-[12px] px-[22px] pb-[14px] pt-[20px]">
           <div className="flex min-w-0 flex-1 flex-col gap-[5px]">
-            <h2 className="text-[16px] font-semibold text-text-primary">{title}</h2>
+            <h2 className="text-[16px] font-medium text-text-primary">{title}</h2>
             {description && <p className="text-[12px] leading-[1.5] text-text-muted">{description}</p>}
           </div>
           <button

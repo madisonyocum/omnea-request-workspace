@@ -110,7 +110,7 @@ function StepDrawerBody({ step, stage, onOpenTab, onClose }: StepDrawerBodyProps
           <div className="flex items-center gap-[9px]">
             <Avatar person={assignee} size="md" />
             <div className="flex flex-col">
-              <span className="text-[13px] font-semibold text-text-primary">{assignee.name}</span>
+              <span className="text-[13px] font-medium text-text-primary">{assignee.name}</span>
               <span className="text-[11px] text-text-muted">{assignee.jobTitle}</span>
             </div>
           </div>
@@ -174,7 +174,7 @@ function StepDrawerBody({ step, stage, onOpenTab, onClose }: StepDrawerBodyProps
 function Field({ label, children }: { label: string; children: ReactNode }) {
   return (
     <div className="flex flex-col gap-[8px]">
-      <span className="text-[10px] font-semibold tracking-[0.8px] text-text-muted uppercase">{label}</span>
+      <span className="text-[10px] font-medium tracking-[0.8px] text-text-muted uppercase">{label}</span>
       {children}
     </div>
   );

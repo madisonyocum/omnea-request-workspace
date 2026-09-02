@@ -235,7 +235,7 @@ function SectionRow({
           strokeWidth={1.8}
         />
         <SectionMarker progress={progress} />
-        <span className={cn('min-w-0 flex-1 text-[13px] font-semibold', open ? 'text-text-primary' : 'text-text-secondary')}>
+        <span className={cn('min-w-0 flex-1 text-[13px] font-medium', open ? 'text-text-primary' : 'text-text-secondary')}>
           {section.title}
         </span>
         <span className={cn('shrink-0 text-[12px]', progress.flagged > 0 ? 'text-warning-600' : 'text-text-muted')}>

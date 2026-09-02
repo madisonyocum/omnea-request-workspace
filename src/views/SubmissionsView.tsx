@@ -163,7 +163,7 @@ function PendingState({ formName }: { formName: string }) {
       <span className="flex size-[40px] items-center justify-center rounded-full bg-surface-sunken">
         <Clock className="size-[19px] text-text-muted" strokeWidth={1.7} />
       </span>
-      <p className="text-[14px] font-semibold text-text-primary">{formName} has not been sent yet</p>
+      <p className="text-[14px] font-medium text-text-primary">{formName} has not been sent yet</p>
       <p className="max-w-[380px] text-[12px] leading-[1.55] text-text-muted">
         Engagement forms are issued to Mailchimp automatically once Stage 5 begins. Nothing is required from you
         right now.
