@@ -4,7 +4,14 @@ import { Button } from '@/components/ui/Button';
 import { DotPill } from '@/components/ui/Pill';
 import { Menu } from '@/components/ui/Menu';
 import { PEOPLE, person } from '@/domain/people';
-import { ROLE_ACCENT, ROLE_ACTIVE_CARD, ROLE_APPROVED_CARD, ROLE_VIEWER_ID } from '@/domain/workflow';
+import {
+  genericActiveCardContent,
+  genericApprovedContent,
+  ROLE_ACCENT,
+  ROLE_ACTIVE_CARD,
+  ROLE_APPROVED_CARD,
+  roleViewerId,
+} from '@/domain/workflow';
 import type { WorkflowStage, WorkflowStep } from '@/domain/types';
 import { useWorkspace } from '@/state/workspaceContext';
 
@@ -20,13 +27,14 @@ export function ActiveStageCard({
   onFocusStep: (stepId: string) => void;
 }) {
   const { state, dispatch } = useWorkspace();
-  const content = ROLE_ACTIVE_CARD[state.role];
+  const content = ROLE_ACTIVE_CARD[stage.id]?.[state.role] ?? genericActiveCardContent(step, stage);
   const files = step.detail.attachments;
   const visibleFiles = files.slice(0, 2);
   const moreFiles = files.length - visibleFiles.length;
 
   const isComplete = step.status === 'complete';
   const isDeclined = step.status === 'declined';
+  const isPreview = stage.status !== 'current' && !isComplete && !isDeclined;
   const nextStep = stage.steps.find((candidate) => candidate.id !== step.id && candidate.status !== 'complete');
 
   const runAction = (kind: 'remind' | 'reassign' | 'approve' | 'decline' | 'override' | 'reopen') => {
@@ -48,22 +56,23 @@ export function ActiveStageCard({
   };
 
   if (isComplete) {
-    const approved = ROLE_APPROVED_CARD[state.role];
+    const approved = ROLE_APPROVED_CARD[stage.id]?.[state.role] ?? genericApprovedContent(step);
     const approvedAt = step.detail.history[step.detail.history.length - 1]?.at ?? 'just now';
     const format = (template: string) =>
       template
         .replaceAll('{next}', nextStep?.name ?? 'the next step')
         .replaceAll('{nextAssignee}', nextStep ? person(nextStep.assigneeId).name : 'the team')
+        .replaceAll('{nextCritical}', nextStep?.status === 'overdue' ? ' — overdue' : '')
         .replaceAll('{time}', approvedAt);
 
     const assignee = person(step.assigneeId);
-    const viewerIsAssignee = ROLE_VIEWER_ID[state.role] === step.assigneeId;
+    const viewerIsAssignee = roleViewerId(state.role, state.stages) === step.assigneeId;
     const escalation =
       approved.escalation && nextStep?.status === 'overdue' ? { ...approved.escalation, message: format(approved.escalation.message) } : undefined;
 
     return (
-      <div className="flex w-full overflow-hidden rounded-[14px] border border-border-default bg-surface-card">
-        <div className="w-[4px] shrink-0 bg-success-500" />
+      <div className="flex w-full flex-1 rounded-[14px] border border-border-default bg-surface-card">
+        <div className="w-[4px] shrink-0 rounded-l-[14px] bg-success-500" />
         <div className="flex flex-1 flex-col gap-[16px] px-[22px] py-[20px]">
           <div className="flex flex-col gap-[8px]">
             <div className="flex items-center gap-[12px]">
@@ -105,7 +114,7 @@ export function ActiveStageCard({
             )}
           </div>
 
-          <div className="flex w-[45%] shrink-0 items-center gap-[9px] self-start rounded-[10px] bg-success-50 py-[10px] pl-[12px] pr-[14px]">
+          <div className="flex w-full items-center gap-[9px] rounded-[10px] bg-success-50 py-[10px] pl-[12px] pr-[14px]">
             <Check className="size-[14px] shrink-0 text-success-700" strokeWidth={2.4} />
             <span className="min-w-0 flex-1 text-[12px] font-medium text-success-700">{format(approved.banner.message)}</span>
             <button
@@ -118,7 +127,7 @@ export function ActiveStageCard({
           </div>
 
           {escalation && (
-            <div className="flex w-[45%] shrink-0 items-center gap-[9px] self-start rounded-[10px] bg-danger-100 py-[10px] pl-[12px] pr-[14px]">
+            <div className="flex w-full items-center gap-[9px] rounded-[10px] bg-danger-100 py-[10px] pl-[12px] pr-[14px]">
               <AlertTriangle className="size-[14px] shrink-0 text-danger-700" strokeWidth={2} />
               <span className="min-w-0 flex-1 text-[12px] font-medium text-danger-700">{escalation.message}</span>
               <button
@@ -132,13 +141,12 @@ export function ActiveStageCard({
           )}
 
           <div className="flex w-full items-center gap-[10px]">
-            {approved.primaryKind === 'open-next' ? (
-              nextStep && (
-                <Button size="md" variant="dark" onClick={() => onFocusStep(nextStep.id)}>
-                  {format(approved.primaryLabel)}
-                </Button>
-              )
-            ) : (
+            {approved.primaryKind === 'open-next' && nextStep && (
+              <Button size="md" variant="dark" onClick={() => onFocusStep(nextStep.id)}>
+                {format(approved.primaryLabel ?? 'Open next step')}
+              </Button>
+            )}
+            {approved.primaryKind === 'back-to-queue' && (
               <Button size="md" variant="dark" onClick={() => dispatch({ type: 'tab/select', tab: 'tasks' })}>
                 {approved.primaryLabel}
               </Button>
@@ -162,16 +170,21 @@ export function ActiveStageCard({
   }
 
   const meta = person(content.meta.personId);
-  const actions = isDeclined && state.role === 'approver' ? [{ label: 'Reopen for decision', variant: 'secondary' as const, kind: 'reopen' as const }] : content.actions;
-  const pillTone = isDeclined ? 'danger' : 'warning';
+  const actions =
+    isDeclined && state.role === 'approver'
+      ? [{ label: 'Reopen for decision', variant: 'secondary' as const, kind: 'reopen' as const }]
+      : isPreview
+        ? []
+        : content.actions;
+  const pillTone = isDeclined ? 'danger' : isPreview ? 'muted' : 'warning';
   const pillLabel = isDeclined ? 'Declined' : content.duePill;
-  const railTone = isDeclined ? 'bg-danger-500' : ROLE_ACCENT[state.role].rail;
-  const actorName = person(ROLE_VIEWER_ID[state.role]).name;
+  const railTone = isDeclined ? 'bg-danger-500' : isPreview ? 'bg-border-strong' : ROLE_ACCENT[state.role].rail;
+  const actorName = person(roleViewerId(state.role, state.stages)).name;
   const body = isDeclined ? `${actorName} declined this step. Reopen it if this needs another look.` : content.body;
 
   return (
-    <div className="flex w-full overflow-hidden rounded-[14px] border border-border-default bg-surface-card">
-      <div className={cn('w-[4px] shrink-0', railTone)} />
+    <div className="flex w-full flex-1 rounded-[14px] border border-border-default bg-surface-card">
+      <div className={cn('w-[4px] shrink-0 rounded-l-[14px]', railTone)} />
       <div className="flex flex-1 flex-col gap-[16px] px-[22px] py-[20px]">
         <div className="flex flex-col gap-[8px]">
           <div className="flex items-center gap-[12px]">
@@ -186,7 +199,12 @@ export function ActiveStageCard({
         </div>
 
         <div className="flex items-center gap-[10px]">
-          <span className="flex size-[24px] shrink-0 items-center justify-center rounded-full bg-warning-500">
+          <span
+            className={cn(
+              'flex size-[24px] shrink-0 items-center justify-center rounded-full',
+              isPreview ? 'bg-text-disabled' : 'bg-warning-500',
+            )}
+          >
             <span className="text-[9px] font-bold text-white">{meta.initials}</span>
           </span>
           <span className="text-[12px] font-medium text-text-primary">{meta.name}</span>
@@ -220,7 +238,7 @@ export function ActiveStageCard({
         </div>
 
         {stage.blocker && (
-          <div className="flex w-[45%] shrink-0 items-center gap-[9px] self-start rounded-[10px] bg-danger-100 py-[10px] pl-[12px] pr-[14px]">
+          <div className="flex w-full items-center gap-[9px] rounded-[10px] bg-danger-100 py-[10px] pl-[12px] pr-[14px]">
             <AlertTriangle className="size-[14px] shrink-0 text-danger-700" strokeWidth={2} />
             <span className="min-w-0 flex-1 text-[12px] font-medium text-danger-700">{stage.blocker.message}</span>
             <button
@@ -234,7 +252,7 @@ export function ActiveStageCard({
         )}
 
         {content.policyBanner && (
-          <div className="flex w-[45%] shrink-0 items-center gap-[9px] self-start rounded-[10px] bg-surface-subtle py-[10px] pl-[12px] pr-[14px]">
+          <div className="flex w-full items-center gap-[9px] rounded-[10px] bg-surface-subtle py-[10px] pl-[12px] pr-[14px]">
             <span className="min-w-0 flex-1 text-[12px] font-medium text-text-secondary">
               {content.policyBanner.message}
             </span>

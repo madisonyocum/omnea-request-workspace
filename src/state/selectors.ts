@@ -7,7 +7,7 @@ import type {
   WorkflowStage,
   WorkflowStep,
 } from '@/domain/types';
-import { ROLE_STAT, STAT_STRIP } from '@/domain/workflow';
+import { ROLE_ADMIN_SLA_CAPTION, ROLE_STAT, STAT_STRIP } from '@/domain/workflow';
 import { SUBMISSION_FORMS } from '@/domain/submissions';
 import { TASK_FORMS } from '@/domain/tasks';
 import { person } from '@/domain/people';
@@ -27,15 +27,15 @@ export function runningSteps(stages: WorkflowStage[]): WorkflowStep[] {
  */
 export function statStrip(state: WorkspaceState): StatItem[] {
   const running = runningSteps(state.stages);
-  const approvalsStage = state.stages.find((stage) => stage.id === 'stage-3');
-  const leadStep = approvalsStage?.steps[0];
+  const currentStage = state.stages.find((stage) => stage.status === 'current');
+  const leadStep = currentStage?.steps[0];
   const leadDecided = leadStep?.status === 'complete';
 
   return STAT_STRIP.map((stat) => {
     if (stat.id === 'stage' && stat.meter) {
       return {
         ...stat,
-        caption: `Approvals phase · ${running.length} running`,
+        caption: `${currentStage?.label ?? 'Approvals'} phase · ${running.length} running`,
         meter: { ...stat.meter, running: running.length },
       };
     }
@@ -43,9 +43,9 @@ export function statStrip(state: WorkspaceState): StatItem[] {
     if (stat.id === 'waiting') {
       // The approver's tile reframes entirely around their own decision.
       if (state.role === 'approver') {
-        return leadDecided
-          ? { id: 'decision', label: 'Your decision', value: 'Approved', caption: 'Budget approval notified' }
-          : ROLE_STAT.approver;
+        if (!leadDecided) return ROLE_STAT.approver;
+        const notified = running[0] ? `${person(running[0].assigneeId).name} notified` : 'Nothing else needs you';
+        return { id: 'decision', label: 'Your decision', value: 'Approved', caption: notified };
       }
 
       if (running.length === 0) {
@@ -53,16 +53,16 @@ export function statStrip(state: WorkspaceState): StatItem[] {
       }
       const [first, ...rest] = running;
       const owner = person(first.assigneeId);
-      const roleStat = ROLE_STAT[state.role];
       const overdue = first.status === 'overdue';
       const suffix = rest.length > 0 ? `+${rest.length} more · ` : '';
 
       if (state.role === 'admin') {
+        const slaCaption = currentStage && ROLE_ADMIN_SLA_CAPTION[currentStage.id];
         return {
           ...stat,
           value: owner.name,
-          caption: overdue ? `${first.name} overdue` : roleStat.caption,
-          captionTone: overdue ? 'danger' : roleStat.captionTone,
+          caption: overdue ? `${first.name} overdue` : (slaCaption ?? `${suffix}longest 3 days`),
+          captionTone: overdue || slaCaption ? 'danger' : undefined,
           tone: overdue ? 'danger' : undefined,
           personId: owner.id,
         };

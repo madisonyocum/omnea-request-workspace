@@ -9,7 +9,7 @@ import type {
   WorkflowStage,
   WorkflowStep,
 } from '@/domain/types';
-import { INITIAL_COMMENTS, ROLE_VIEWER_ID, WORKFLOW_STAGES } from '@/domain/workflow';
+import { INITIAL_COMMENTS, roleViewerId, WORKFLOW_STAGES } from '@/domain/workflow';
 import { INITIAL_TASK_ANSWERS, TASK_FORMS } from '@/domain/tasks';
 import { INITIAL_DOCUMENTS, SUBMISSION_FORMS } from '@/domain/submissions';
 import { person } from '@/domain/people';
@@ -205,7 +205,7 @@ export function workspaceReducer(state: WorkspaceState, action: WorkspaceAction)
     case 'step/decide': {
       const step = findStep(state.stages, action.stepId);
       if (!step) return state;
-      const actor = person(ROLE_VIEWER_ID[state.role]).name;
+      const actor = person(roleViewerId(state.role, state.stages)).name;
 
       if (action.decision === 'decline') {
         return withToast(
@@ -267,7 +267,7 @@ export function workspaceReducer(state: WorkspaceState, action: WorkspaceAction)
             status: 'active',
             detail: {
               ...current.detail,
-              history: [...current.detail.history, { at: `${TODAY}, 12:34`, label: 'Reopened for decision', actor: person(ROLE_VIEWER_ID[state.role]).name }],
+              history: [...current.detail.history, { at: `${TODAY}, 12:34`, label: 'Reopened for decision', actor: person(roleViewerId(state.role, state.stages)).name }],
             },
           })),
         },
@@ -278,7 +278,7 @@ export function workspaceReducer(state: WorkspaceState, action: WorkspaceAction)
     case 'comment/add': {
       const comment: Comment = {
         id: nextId('comment'),
-        authorId: ROLE_VIEWER_ID[state.role],
+        authorId: roleViewerId(state.role, state.stages),
         timestamp: 'Just now',
         body: action.body,
         replies: [],
@@ -295,7 +295,7 @@ export function workspaceReducer(state: WorkspaceState, action: WorkspaceAction)
                 ...comment,
                 replies: [
                   ...comment.replies,
-                  { id: nextId('reply'), authorId: ROLE_VIEWER_ID[state.role], timestamp: 'Just now', body: action.body },
+                  { id: nextId('reply'), authorId: roleViewerId(state.role, state.stages), timestamp: 'Just now', body: action.body },
                 ],
               }
             : comment,

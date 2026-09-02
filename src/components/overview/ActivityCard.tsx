@@ -6,7 +6,7 @@ import { Avatar } from '@/components/ui/Avatar';
 import { Badge } from '@/components/ui/Pill';
 import { Button } from '@/components/ui/Button';
 import { person } from '@/domain/people';
-import { ROLE_VIEWER_ID } from '@/domain/workflow';
+import { roleViewerId } from '@/domain/workflow';
 import type { Comment } from '@/domain/types';
 import { useWorkspace } from '@/state/workspaceContext';
 
@@ -149,7 +149,7 @@ function Composer({
   const [value, setValue] = useState('');
   const [focused, setFocused] = useState(false);
   const canSubmit = value.trim().length > 0;
-  const viewer = person(ROLE_VIEWER_ID[state.role]);
+  const viewer = person(roleViewerId(state.role, state.stages));
 
   const submit = () => {
     if (!canSubmit) return;

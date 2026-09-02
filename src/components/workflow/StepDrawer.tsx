@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { BellRing, ExternalLink, Paperclip, UserPlus } from 'lucide-react';
+import { BellRing, Check, ExternalLink, Paperclip, UserPlus } from 'lucide-react';
 import { Drawer } from '@/components/ui/Drawer';
 import { Avatar } from '@/components/ui/Avatar';
 import { Button } from '@/components/ui/Button';
@@ -58,6 +58,19 @@ function StepDrawerBody({ step, stage, onOpenTab, onClose }: StepDrawerBodyProps
       }
       footer={
         <>
+          {actions.includes('approve') && step.status !== 'complete' && step.status !== 'declined' && (
+            <Button
+              size="md"
+              variant="primary"
+              icon={<Check className="size-[14px]" strokeWidth={2} />}
+              onClick={() => {
+                dispatch({ type: 'step/decide', stepId: step.id, decision: 'approve' });
+                onClose();
+              }}
+            >
+              Approve
+            </Button>
+          )}
           {actions.includes('remind') && (
             <Button
               size="md"

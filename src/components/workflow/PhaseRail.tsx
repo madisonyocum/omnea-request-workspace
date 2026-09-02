@@ -4,7 +4,15 @@ import type { WorkflowStage } from '@/domain/types';
 import { ROLE_ACCENT } from '@/domain/workflow';
 import { useWorkspace } from '@/state/workspaceContext';
 
-export function PhaseRail({ stages }: { stages: WorkflowStage[] }) {
+export function PhaseRail({
+  stages,
+  viewedStageId,
+  onSelect,
+}: {
+  stages: WorkflowStage[];
+  viewedStageId: string;
+  onSelect: (stageId: string) => void;
+}) {
   const { state } = useWorkspace();
   const accent = ROLE_ACCENT[state.role];
 
@@ -12,12 +20,15 @@ export function PhaseRail({ stages }: { stages: WorkflowStage[] }) {
     <div className="flex w-[320px] shrink-0 flex-col gap-[1px]">
       {stages.map((stage) => {
         const complete = stage.steps.filter((step) => step.status === 'complete').length;
+        const viewed = stage.id === viewedStageId;
         return (
-          <div
+          <button
             key={stage.id}
+            type="button"
+            onClick={() => onSelect(stage.id)}
             className={cn(
-              'flex items-center gap-[12px] rounded-[10px] px-[16px] py-[9px]',
-              stage.status === 'current' && accent.tint,
+              'flex cursor-pointer items-center gap-[12px] rounded-[10px] px-[16px] py-[9px] text-left transition-colors duration-120',
+              viewed ? 'bg-surface-brand-tint' : 'hover:bg-surface-sunken',
             )}
           >
             {stage.status === 'complete' ? (
@@ -31,23 +42,15 @@ export function PhaseRail({ stages }: { stages: WorkflowStage[] }) {
               />
             )}
             <span
-              className={cn(
-                'text-[14px] font-medium',
-                stage.status === 'current' ? 'text-text-primary' : 'text-text-secondary',
-              )}
+              className={cn('text-[14px] font-medium', viewed ? 'text-text-primary' : 'text-text-secondary')}
             >
               {stage.label}
             </span>
             <span className="flex-1" />
-            <span
-              className={cn(
-                'text-[10px] font-medium',
-                stage.status === 'current' ? accent.text : 'text-text-tertiary',
-              )}
-            >
+            <span className={cn('text-[10px] font-medium', viewed ? 'text-brand-700' : 'text-text-tertiary')}>
               {complete} of {stage.steps.length}
             </span>
-          </div>
+          </button>
         );
       })}
     </div>

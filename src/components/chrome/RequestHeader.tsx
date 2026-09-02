@@ -17,7 +17,7 @@ import { Menu } from '@/components/ui/Menu';
 import { Modal } from '@/components/ui/Modal';
 import { SegmentedControl } from '@/components/ui/SegmentedControl';
 import { WATCHER_IDS, person } from '@/domain/people';
-import { REQUEST, ROLE_LABEL, ROLE_VIEWER_ID } from '@/domain/workflow';
+import { REQUEST, ROLE_LABEL, roleViewerId } from '@/domain/workflow';
 import type { UserRole } from '@/domain/types';
 import { useWorkspace } from '@/state/workspaceContext';
 import { cn } from '@/lib/cn';
@@ -32,7 +32,7 @@ export function RequestHeader() {
   const { state, dispatch } = useWorkspace();
   const [shareOpen, setShareOpen] = useState(false);
   const watchers = WATCHER_IDS.map(person);
-  const viewer = person(ROLE_VIEWER_ID[state.role]);
+  const viewer = person(roleViewerId(state.role, state.stages));
 
   return (
     <div className="flex items-center gap-[10px] bg-surface-card px-[24px] pt-[12px] pb-[16px]">
