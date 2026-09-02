@@ -20,7 +20,7 @@ const POINTS = [
   },
 ];
 
-export function OnboardingModal({ onClose }: { onClose: () => void }) {
+export function OnboardingModal({ onClose, onStartTour }: { onClose: () => void; onStartTour: () => void }) {
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') onClose();
@@ -65,10 +65,17 @@ export function OnboardingModal({ onClose }: { onClose: () => void }) {
           ))}
         </div>
 
-        <div className="mt-[8px] w-full px-[40px] pb-[40px]">
-          <Button size="md" variant="primary" className="w-full" onClick={onClose}>
-            Explore Prototype
+        <div className="mt-[8px] flex w-full flex-col items-center gap-[10px] px-[40px] pb-[40px]">
+          <Button size="md" variant="primary" className="w-full" onClick={onStartTour}>
+            Take the guided tour
           </Button>
+          <button
+            type="button"
+            onClick={onClose}
+            className="cursor-pointer text-[12px] font-medium text-text-muted hover:text-text-secondary"
+          >
+            Skip, I'll explore on my own
+          </button>
         </div>
       </div>
     </div>
