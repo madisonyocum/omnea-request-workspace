@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { GitBranch, ShieldCheck, Users, Workflow } from 'lucide-react';
+import { FlaskConical, GitBranch, ShieldCheck, Users } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 
 const POINTS = [
@@ -45,7 +45,7 @@ export function OnboardingModal({ onClose }: { onClose: () => void }) {
       >
         <div className="flex flex-col items-center gap-[18px] px-[48px] pb-[32px] pt-[48px]">
           <div className="flex size-[56px] shrink-0 items-center justify-center rounded-[16px] bg-brand-600 text-white">
-            <Workflow className="size-[26px]" strokeWidth={1.8} />
+            <FlaskConical className="size-[26px]" strokeWidth={1.8} />
           </div>
           <div className="flex flex-col items-center gap-[8px]">
             <h2 className="text-[21px] font-medium text-text-primary">Welcome to the prototype</h2>
