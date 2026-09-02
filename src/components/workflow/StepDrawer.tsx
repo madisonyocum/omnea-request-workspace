@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { BellRing, Check, ExternalLink, Paperclip, UserPlus } from 'lucide-react';
+import { Ban, BellRing, Check, ExternalLink, Paperclip, UserPlus } from 'lucide-react';
 import { Drawer } from '@/components/ui/Drawer';
 import { Avatar } from '@/components/ui/Avatar';
 import { Button } from '@/components/ui/Button';
@@ -15,6 +15,7 @@ const STATUS_LABEL: Record<StepStatus, { label: string; tone: 'success' | 'warni
   active: { label: 'In progress', tone: 'warning' },
   overdue: { label: 'Overdue', tone: 'danger' },
   declined: { label: 'Declined', tone: 'danger' },
+  cancelled: { label: 'Cancelled', tone: 'neutral' },
   waiting: { label: 'Waiting on earlier stage', tone: 'neutral' },
   upcoming: { label: 'Not started', tone: 'neutral' },
 };
@@ -69,6 +70,18 @@ function StepDrawerBody({ step, stage, onOpenTab, onClose }: StepDrawerBodyProps
               }}
             >
               Approve
+            </Button>
+          )}
+          {actions.includes('decline') && step.status !== 'complete' && step.status !== 'declined' && (
+            <Button
+              size="md"
+              icon={<Ban className="size-[14px]" strokeWidth={1.8} />}
+              onClick={() => {
+                dispatch({ type: 'step/decide', stepId: step.id, decision: 'decline' });
+                onClose();
+              }}
+            >
+              Decline
             </Button>
           )}
           {actions.includes('remind') && (

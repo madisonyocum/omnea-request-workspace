@@ -17,7 +17,7 @@ export interface Person {
 
 /* ---------------------------------------------------------------- workflow */
 
-export type StepStatus = 'complete' | 'active' | 'overdue' | 'declined' | 'waiting' | 'upcoming';
+export type StepStatus = 'complete' | 'active' | 'overdue' | 'declined' | 'cancelled' | 'waiting' | 'upcoming';
 
 export type StepMetaIcon = 'doc' | 'bell' | 'clock' | 'arrow' | 'check' | 'x';
 
@@ -63,7 +63,7 @@ export interface WorkflowStep {
     attachments: { name: string; size: string }[];
   };
   /** Actions offered in the drawer for this step. */
-  actions?: ('remind' | 'reassign' | 'skip' | 'approve' | 'open-form')[];
+  actions?: ('remind' | 'reassign' | 'skip' | 'approve' | 'decline' | 'open-form')[];
 }
 
 export type StageStatus = 'complete' | 'current' | 'upcoming';

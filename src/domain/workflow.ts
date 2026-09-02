@@ -139,11 +139,12 @@ export const WORKFLOW_STAGES: WorkflowStage[] = [
             { at: '4 Jun, 09:12', label: 'Approval requested', actor: 'Alex Green' },
           ],
           attachments: [
-            { name: 'Pricing schedule.xlsx', size: '84 KB' },
+            { name: 'Budget request', size: '84 KB' },
+            { name: 'Quote v3', size: '212 KB' },
             { name: 'MSA v3.2.pdf', size: '1.2 MB' },
           ],
         },
-        actions: ['approve', 'remind', 'reassign'],
+        actions: ['approve', 'decline', 'remind', 'reassign'],
       },
       {
         id: 'legal-review',
@@ -330,9 +331,9 @@ export interface RoleActiveCardContent {
   policyBanner?: { message: string; linkLabel: string };
 }
 
-/** How the current step of each phase reads for each viewer, keyed by stage id. */
+/** How the current step reads for each viewer, keyed by step id (not stage), since a phase's non-lead lines can be focused too. */
 export const ROLE_ACTIVE_CARD: Record<string, Record<UserRole, RoleActiveCardContent>> = {
-  'stage-3': {
+  'manager-approval': {
     requester: {
       duePill: 'Due in 2 days',
       contextLabel: 'APPROVALS · STAGE 1 OF 3',
@@ -372,11 +373,44 @@ export const ROLE_ACTIVE_CARD: Record<string, Record<UserRole, RoleActiveCardCon
       },
     },
   },
-  'stage-4': {
+  'budget-approval': {
+    requester: {
+      duePill: 'Overdue',
+      contextLabel: 'APPROVALS · STAGE 2 OF 3',
+      body: "Jaslyn Moore hasn't approved the £48,000 budget. It's 2 days overdue and is the last thing holding up the purchase order.",
+      meta: { personId: 'jaslyn', caption: 'Due 29 May · 4 days in stage' },
+      actions: [
+        { label: 'Send reminder', variant: 'dark', kind: 'remind' },
+        { label: 'Reassign approver', variant: 'secondary', kind: 'reassign' },
+      ],
+      linkLabel: 'More details',
+    },
+    approver: {
+      duePill: 'Overdue',
+      contextLabel: 'VIEW ONLY · APPROVALS · STAGE 2 OF 3',
+      body: "Jaslyn Moore hasn't approved the £48,000 budget. Your line is done, this is here so you can see what's holding the request.",
+      meta: { personId: 'jaslyn', caption: 'Due 29 May · 4 days in stage' },
+      actions: [],
+      linkLabel: 'More details',
+    },
+    admin: {
+      duePill: 'Overdue',
+      contextLabel: 'APPROVALS · STAGE 2 OF 3',
+      body: 'Jaslyn Moore is 2 days past the 3-day SLA on the £48,000 budget. Legal review and the purchase order are both blocked behind this line.',
+      meta: { personId: 'jaslyn', caption: 'Due 29 May · 4 days in stage · SLA 3 days' },
+      actions: [
+        { label: 'Send reminder', variant: 'dark', kind: 'remind' },
+        { label: 'Reassign approver', variant: 'secondary', kind: 'reassign' },
+        { label: 'Override & advance', variant: 'secondary', kind: 'override' },
+      ],
+      linkLabel: 'Audit trail',
+    },
+  },
+  'security-review': {
     requester: {
       duePill: 'In progress',
       contextLabel: 'REVIEWS · STAGE 1 OF 2',
-      body: 'Waiting on Sadie Bernard to finish the security review — the last thing standing between here and engagement.',
+      body: 'Waiting on Sadie Bernard to finish the security review, the last thing standing between here and engagement.',
       meta: { personId: 'sadie', caption: 'Started 6 Jun · SLA 5 days' },
       actions: [
         { label: 'Send reminder', variant: 'dark', kind: 'remind' },
@@ -414,6 +448,57 @@ export const ROLE_ACTIVE_CARD: Record<string, Record<UserRole, RoleActiveCardCon
   },
 };
 
+export interface RoleDeclinedContent {
+  contextLabel: string;
+  body: string;
+  reasonBanner: { message: string; linkLabel: string };
+  /** Admin only — a second banner offering to undo the cascade. */
+  notifyBanner?: { message: string; linkLabel: string };
+  linkLabel: string;
+}
+
+/** Bespoke copy for a declined branch line, keyed by step id. Falls back to a generic message otherwise. */
+export const ROLE_DECLINED_CARD: Record<string, Record<UserRole, RoleDeclinedContent>> = {
+  'budget-approval': {
+    requester: {
+      contextLabel: 'APPROVALS · STAGE 2 OF 3 · DECLINED',
+      body: 'Jaslyn Moore declined the £48,000 budget on {time}. Legal review has been cancelled and the purchase order is on hold until you resubmit.',
+      reasonBanner: {
+        message: 'Reason: not enough budget left this quarter, resubmit with a revised amount or move to Q3',
+        linkLabel: 'View decline note',
+      },
+      linkLabel: 'More details',
+    },
+    approver: {
+      contextLabel: 'VIEW ONLY · APPROVALS · STAGE 2 OF 3 · DECLINED',
+      body: 'Jaslyn Moore declined the £48,000 budget on {time}. Your approval still stands, the request goes back to Ben Williams to revise.',
+      reasonBanner: {
+        message: 'Reason: not enough budget left this quarter, nothing further needed from you',
+        linkLabel: 'View decline note',
+      },
+      linkLabel: 'More details',
+    },
+    admin: {
+      contextLabel: 'APPROVALS · STAGE 2 OF 3 · DECLINED',
+      body: 'Jaslyn Moore declined the £48,000 budget on {time}, 5 days into a 3-day SLA. Legal review was auto-cancelled and the purchase order is on hold.',
+      reasonBanner: {
+        message: 'Declined by Jaslyn Moore · {time} · reason and decision logged to audit trail',
+        linkLabel: 'View audit log',
+      },
+      notifyBanner: {
+        message: 'Ben Williams notified {time} · Legal review auto-cancelled · PO on hold',
+        linkLabel: 'Reopen stage',
+      },
+      linkLabel: 'Audit trail',
+    },
+  },
+};
+
+/** When a branch step is declined, the lines queued behind it are cancelled rather than left waiting. */
+export const CASCADE_CANCEL: Record<string, string[]> = {
+  'budget-approval': ['legal-review'],
+};
+
 export interface RoleApprovedContent {
   /** {next}, {nextAssignee} and {time} are resolved against the real next step at render time. */
   body: string;
@@ -429,7 +514,7 @@ export interface RoleApprovedContent {
 
 /** How the just-approved step reads for each viewer, keyed by stage id. */
 export const ROLE_APPROVED_CARD: Record<string, Record<UserRole, RoleApprovedContent>> = {
-  'stage-3': {
+  'manager-approval': {
     requester: {
       body: 'Martha Nelson approved this stage just now. {next} is the last thing holding up the purchase order.',
       metaCaption: '3 days in stage',
@@ -439,7 +524,7 @@ export const ROLE_APPROVED_CARD: Record<string, Record<UserRole, RoleApprovedCon
       secondaryLabel: 'View approval',
     },
     approver: {
-      body: 'You approved this stage at {time}. {next} is next — nothing else on this request needs you.',
+      body: 'You approved this stage at {time}. {next} is next, nothing else on this request needs you.',
       metaCaption: '4 days in stage',
       banner: { message: 'You approved this · {time} · {nextAssignee} notified', linkLabel: 'View approval' },
       primaryLabel: 'Back to my approvals',
@@ -450,13 +535,13 @@ export const ROLE_APPROVED_CARD: Record<string, Record<UserRole, RoleApprovedCon
       body: 'Martha Nelson approved at {time}, inside the 3-day SLA. {next} is now the critical path{nextCritical}.',
       metaCaption: '3 days in stage · SLA 3 days',
       banner: { message: 'Approved by Martha Nelson · {time} · logged to audit trail', linkLabel: 'View audit log' },
-      escalation: { message: '{next} overdue 2 days · auto-escalated to Priya Raman', linkLabel: 'Override & advance' },
+      escalation: { message: '{next} overdue 2 days, auto-escalated to Priya Raman', linkLabel: 'Override & advance' },
       primaryLabel: 'Open {next}',
       primaryKind: 'open-next',
       secondaryLabel: 'View audit log',
     },
   },
-  'stage-4': {
+  'security-review': {
     requester: {
       body: 'Sadie Bernard approved the security review just now. {next} is the last thing holding up engagement.',
       metaCaption: '1 day in stage',
@@ -466,7 +551,7 @@ export const ROLE_APPROVED_CARD: Record<string, Record<UserRole, RoleApprovedCon
       secondaryLabel: 'View approval',
     },
     approver: {
-      body: 'You approved this stage at {time}. {next} is next — nothing else on this request needs you.',
+      body: 'You approved this stage at {time}. {next} is next, nothing else on this request needs you.',
       metaCaption: '1 day in stage',
       banner: { message: 'You approved this · {time} · {nextAssignee} notified', linkLabel: 'View approval' },
       primaryLabel: 'Back to my approvals',
@@ -477,7 +562,7 @@ export const ROLE_APPROVED_CARD: Record<string, Record<UserRole, RoleApprovedCon
       body: 'Sadie Bernard approved at {time}, inside the 5-day SLA. {next} is now the critical path{nextCritical}.',
       metaCaption: '1 day in stage · SLA 5 days',
       banner: { message: 'Approved by Sadie Bernard · {time} · logged to audit trail', linkLabel: 'View audit log' },
-      escalation: { message: '{next} is overdue · auto-escalated to the finance lead', linkLabel: 'Override & advance' },
+      escalation: { message: '{next} is overdue, auto-escalated to the finance lead', linkLabel: 'Override & advance' },
       primaryLabel: 'Open {next}',
       primaryKind: 'open-next',
       secondaryLabel: 'View audit log',

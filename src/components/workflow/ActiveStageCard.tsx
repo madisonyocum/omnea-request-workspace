@@ -1,4 +1,4 @@
-import { AlertTriangle, Bell, Check, ChevronRight, MoreHorizontal, Paperclip } from 'lucide-react';
+import { AlertTriangle, Ban, Bell, Check, ChevronRight, MoreHorizontal, Paperclip } from 'lucide-react';
 import { cn } from '@/lib/cn';
 import { Button } from '@/components/ui/Button';
 import { DotPill } from '@/components/ui/Pill';
@@ -10,6 +10,7 @@ import {
   ROLE_ACCENT,
   ROLE_ACTIVE_CARD,
   ROLE_APPROVED_CARD,
+  ROLE_DECLINED_CARD,
   roleViewerId,
 } from '@/domain/workflow';
 import type { WorkflowStage, WorkflowStep } from '@/domain/types';
@@ -27,14 +28,16 @@ export function ActiveStageCard({
   onFocusStep: (stepId: string) => void;
 }) {
   const { state, dispatch } = useWorkspace();
-  const content = ROLE_ACTIVE_CARD[stage.id]?.[state.role] ?? genericActiveCardContent(step, stage);
+  const content = ROLE_ACTIVE_CARD[step.id]?.[state.role] ?? genericActiveCardContent(step, stage);
   const files = step.detail.attachments;
   const visibleFiles = files.slice(0, 2);
   const moreFiles = files.length - visibleFiles.length;
+  const lastEvent = step.detail.history[step.detail.history.length - 1];
 
   const isComplete = step.status === 'complete';
   const isDeclined = step.status === 'declined';
-  const isPreview = stage.status !== 'current' && !isComplete && !isDeclined;
+  const isCancelled = step.status === 'cancelled';
+  const isPreview = stage.status !== 'current' && !isComplete && !isDeclined && !isCancelled;
   const nextStep = stage.steps.find((candidate) => candidate.id !== step.id && candidate.status !== 'complete');
 
   const runAction = (kind: 'remind' | 'reassign' | 'approve' | 'decline' | 'override' | 'reopen') => {
@@ -55,14 +58,45 @@ export function ActiveStageCard({
     }
   };
 
+  if (isCancelled) {
+    return (
+      <div className="flex w-full flex-1 rounded-[14px] border border-border-default bg-surface-card">
+        <div className="w-[4px] shrink-0 rounded-l-[14px] bg-border-strong" />
+        <div className="flex flex-1 flex-col gap-[16px] px-[22px] py-[20px]">
+          <div className="flex flex-col gap-[8px]">
+            <div className="flex items-center gap-[12px]">
+              <h3 className="text-[15px] font-medium text-text-primary">{step.name}</h3>
+              <DotPill tone="muted">Cancelled</DotPill>
+              <span className="flex-1" />
+              <span className="text-[10px] font-medium tracking-[0.8px] text-text-tertiary">
+                {content.contextLabel}
+              </span>
+            </div>
+            <p className="text-[13px] text-text-secondary">
+              {lastEvent ? lastEvent.label : 'This line was cancelled.'} Nothing further is needed here.
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={() => dispatch({ type: 'step/select', stepId: step.id })}
+            className="flex w-fit cursor-pointer items-center gap-[5px] text-[12px] font-medium text-brand-700 hover:underline"
+          >
+            {content.linkLabel}
+            <ChevronRight className="size-[12px]" strokeWidth={2} />
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   if (isComplete) {
-    const approved = ROLE_APPROVED_CARD[stage.id]?.[state.role] ?? genericApprovedContent(step);
-    const approvedAt = step.detail.history[step.detail.history.length - 1]?.at ?? 'just now';
+    const approved = ROLE_APPROVED_CARD[step.id]?.[state.role] ?? genericApprovedContent(step);
+    const approvedAt = lastEvent?.at ?? 'just now';
     const format = (template: string) =>
       template
         .replaceAll('{next}', nextStep?.name ?? 'the next step')
         .replaceAll('{nextAssignee}', nextStep ? person(nextStep.assigneeId).name : 'the team')
-        .replaceAll('{nextCritical}', nextStep?.status === 'overdue' ? ' — overdue' : '')
+        .replaceAll('{nextCritical}', nextStep?.status === 'overdue' ? ', overdue' : '')
         .replaceAll('{time}', approvedAt);
 
     const assignee = person(step.assigneeId);
@@ -161,6 +195,105 @@ export function ActiveStageCard({
               className="flex cursor-pointer items-center gap-[5px] text-[12px] font-medium text-brand-700 hover:underline"
             >
               {content.linkLabel}
+              <ChevronRight className="size-[12px]" strokeWidth={2} />
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  const richDeclined = isDeclined ? ROLE_DECLINED_CARD[step.id]?.[state.role] : undefined;
+  if (richDeclined) {
+    const declinedAt = lastEvent?.at ?? 'recently';
+    const format = (template: string) => template.replaceAll('{time}', declinedAt);
+
+    return (
+      <div className="flex w-full flex-1 rounded-[14px] border border-border-default bg-surface-card">
+        <div className="w-[4px] shrink-0 rounded-l-[14px] bg-danger-500" />
+        <div className="flex flex-1 flex-col gap-[16px] px-[22px] py-[20px]">
+          <div className="flex flex-col gap-[8px]">
+            <div className="flex items-center gap-[12px]">
+              <h3 className="text-[15px] font-medium text-text-primary">{step.name}</h3>
+              <DotPill tone="danger">Declined</DotPill>
+              <span className="flex-1" />
+              <span className="text-[10px] font-medium tracking-[0.8px] text-text-tertiary">
+                {richDeclined.contextLabel}
+              </span>
+            </div>
+            <p className="text-[13px] text-text-secondary">{format(richDeclined.body)}</p>
+          </div>
+
+          <div className="flex items-center gap-[10px]">
+            <span className="flex size-[24px] shrink-0 items-center justify-center rounded-full bg-danger-500">
+              <Ban className="size-[11px] text-white" strokeWidth={2.6} />
+            </span>
+            <span className="text-[12px] font-medium text-text-primary">{person(step.assigneeId).name}</span>
+            <span className="text-[12px] text-text-disabled">·</span>
+            <span className="text-[9px] font-medium text-text-tertiary">Declined {declinedAt}</span>
+            <span className="flex-1" />
+            {visibleFiles.length > 0 && (
+              <div className="flex items-center gap-[8px]">
+                {visibleFiles.map((file) => (
+                  <span
+                    key={file.name}
+                    className="inline-flex items-center gap-[7px] rounded-[8px] border border-border-default bg-surface-card py-[6px] pl-[9px] pr-[11px]"
+                  >
+                    <Paperclip className="size-[13px] shrink-0 text-text-tertiary" strokeWidth={1.6} />
+                    <span className="text-[9px] font-medium text-text-secondary">{file.name}</span>
+                  </span>
+                ))}
+                {moreFiles > 0 && (
+                  <span className="rounded-[8px] bg-surface-subtle px-[9px] py-[6px] text-[9px] font-medium text-text-tertiary">
+                    +{moreFiles}
+                  </span>
+                )}
+              </div>
+            )}
+          </div>
+
+          <div className="flex w-full items-center gap-[9px] rounded-[10px] bg-surface-subtle py-[10px] pl-[12px] pr-[14px]">
+            <span className="min-w-0 flex-1 text-[12px] font-medium text-text-secondary">
+              {format(richDeclined.reasonBanner.message)}
+            </span>
+            <button
+              type="button"
+              onClick={() => dispatch({ type: 'step/select', stepId: step.id })}
+              className="shrink-0 cursor-pointer text-[12px] font-medium whitespace-nowrap text-text-secondary hover:underline"
+            >
+              {richDeclined.reasonBanner.linkLabel}
+            </button>
+          </div>
+
+          {richDeclined.notifyBanner && (
+            <div className="flex w-full items-center gap-[9px] rounded-[10px] bg-danger-100 py-[10px] pl-[12px] pr-[14px]">
+              <AlertTriangle className="size-[14px] shrink-0 text-danger-700" strokeWidth={2} />
+              <span className="min-w-0 flex-1 text-[12px] font-medium text-danger-700">
+                {format(richDeclined.notifyBanner.message)}
+              </span>
+              <button
+                type="button"
+                onClick={() => runAction('reopen')}
+                className="shrink-0 cursor-pointer text-[12px] font-medium whitespace-nowrap text-danger-700 hover:underline"
+              >
+                {richDeclined.notifyBanner.linkLabel}
+              </button>
+            </div>
+          )}
+
+          <div className="flex w-full items-center gap-[10px]">
+            {state.role !== 'approver' && (
+              <Button size="md" variant="dark" onClick={() => runAction('reopen')}>
+                Reopen for decision
+              </Button>
+            )}
+            <span className="flex-1" />
+            <button
+              type="button"
+              onClick={() => dispatch({ type: 'step/select', stepId: step.id })}
+              className="flex cursor-pointer items-center gap-[5px] text-[12px] font-medium text-brand-700 hover:underline"
+            >
+              {richDeclined.linkLabel}
               <ChevronRight className="size-[12px]" strokeWidth={2} />
             </button>
           </div>

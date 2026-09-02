@@ -9,7 +9,7 @@ import type {
   WorkflowStage,
   WorkflowStep,
 } from '@/domain/types';
-import { INITIAL_COMMENTS, roleViewerId, WORKFLOW_STAGES } from '@/domain/workflow';
+import { CASCADE_CANCEL, INITIAL_COMMENTS, roleViewerId, WORKFLOW_STAGES } from '@/domain/workflow';
 import { INITIAL_TASK_ANSWERS, TASK_FORMS } from '@/domain/tasks';
 import { INITIAL_DOCUMENTS, SUBMISSION_FORMS } from '@/domain/submissions';
 import { person } from '@/domain/people';
@@ -208,19 +208,34 @@ export function workspaceReducer(state: WorkspaceState, action: WorkspaceAction)
       const actor = person(roleViewerId(state.role, state.stages)).name;
 
       if (action.decision === 'decline') {
-        return withToast(
-          {
-            ...state,
-            stages: mapStep(state.stages, action.stepId, (current) => ({
-              ...current,
-              status: 'declined',
-              detail: {
-                ...current.detail,
-                history: [...current.detail.history, { at: `${TODAY}, 12:34`, label: 'Declined', actor }],
-              },
-            })),
+        let stages = mapStep(state.stages, action.stepId, (current) => ({
+          ...current,
+          status: 'declined',
+          detail: {
+            ...current.detail,
+            history: [...current.detail.history, { at: `${TODAY}, 12:34`, label: 'Declined', actor }],
           },
-          `${step.name} declined`,
+        }));
+
+        // Lines queued behind a declined step are cancelled, not left waiting on a step that will never run.
+        const cascaded = CASCADE_CANCEL[action.stepId] ?? [];
+        for (const cascadedId of cascaded) {
+          stages = mapStep(stages, cascadedId, (current) => ({
+            ...current,
+            status: 'cancelled',
+            detail: {
+              ...current.detail,
+              history: [
+                ...current.detail.history,
+                { at: `${TODAY}, 12:34`, label: `Cancelled, ${step.name.toLowerCase()} declined`, actor: 'Automation' },
+              ],
+            },
+          }));
+        }
+
+        return withToast(
+          { ...state, stages },
+          cascaded.length > 0 ? `${step.name} declined, ${cascaded.length} line cancelled` : `${step.name} declined`,
           'danger',
         );
       }
@@ -251,7 +266,7 @@ export function workspaceReducer(state: WorkspaceState, action: WorkspaceAction)
       const decisionVerb = action.decision === 'override' ? 'overridden & advanced' : 'approved';
       return withToast(
         { ...state, stages },
-        stageComplete ? `${step.name} ${decisionVerb} — ${stage.label} complete` : `${step.name} ${decisionVerb}`,
+        stageComplete ? `${step.name} ${decisionVerb}, ${stage.label} complete` : `${step.name} ${decisionVerb}`,
         'success',
       );
     }
@@ -259,18 +274,35 @@ export function workspaceReducer(state: WorkspaceState, action: WorkspaceAction)
     case 'step/reopen': {
       const step = findStep(state.stages, action.stepId);
       if (!step) return state;
-      return withToast(
-        {
-          ...state,
-          stages: mapStep(state.stages, action.stepId, (current) => ({
-            ...current,
-            status: 'active',
-            detail: {
-              ...current.detail,
-              history: [...current.detail.history, { at: `${TODAY}, 12:34`, label: 'Reopened for decision', actor: person(roleViewerId(state.role, state.stages)).name }],
-            },
-          })),
+      const actor = person(roleViewerId(state.role, state.stages)).name;
+
+      let stages = mapStep(state.stages, action.stepId, (current) => ({
+        ...current,
+        status: 'active',
+        detail: {
+          ...current.detail,
+          history: [...current.detail.history, { at: `${TODAY}, 12:34`, label: 'Reopened for decision', actor }],
         },
+      }));
+
+      // Reopening un-cancels whatever was cancelled behind it.
+      for (const cascadedId of CASCADE_CANCEL[action.stepId] ?? []) {
+        stages = mapStep(stages, cascadedId, (current) =>
+          current.status !== 'cancelled'
+            ? current
+            : {
+                ...current,
+                status: 'waiting',
+                detail: {
+                  ...current.detail,
+                  history: [...current.detail.history, { at: `${TODAY}, 12:34`, label: 'Reinstated', actor }],
+                },
+              },
+        );
+      }
+
+      return withToast(
+        { ...state, stages },
         `${step.name} reopened`,
       );
     }

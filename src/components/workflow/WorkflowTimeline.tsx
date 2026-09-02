@@ -50,7 +50,7 @@ export function WorkflowTimeline() {
         <PhaseRail stages={state.stages} viewedStageId={viewedStage.id} onSelect={setViewedStageId} />
         <div className="flex min-w-0 flex-1 flex-col gap-[12px]">
           <ActiveStageCard stage={viewedStage} step={leadStep} onFocusStep={setFocusedId} />
-          <AlsoRunningCard steps={branchSteps} />
+          <AlsoRunningCard steps={branchSteps} onFocusStep={setFocusedId} />
         </div>
       </div>
     </section>
