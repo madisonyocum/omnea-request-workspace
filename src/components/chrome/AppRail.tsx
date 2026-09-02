@@ -37,7 +37,7 @@ export function AppRail() {
               className={cn(
                 'flex size-[36px] cursor-pointer items-center justify-center rounded-md transition-colors duration-150',
                 active
-                  ? 'bg-surface-rail-active text-white'
+                  ? 'bg-surface-sunken text-text-primary'
                   : 'text-text-tertiary hover:bg-surface-sunken hover:text-text-secondary',
               )}
             >

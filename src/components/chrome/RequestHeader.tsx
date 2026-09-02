@@ -16,6 +16,7 @@ import { Button, IconButton } from '@/components/ui/Button';
 import { Menu } from '@/components/ui/Menu';
 import { Modal } from '@/components/ui/Modal';
 import { SegmentedControl } from '@/components/ui/SegmentedControl';
+import { RoleSwitchHint } from '@/components/onboarding/RoleSwitchHint';
 import { WATCHER_IDS, person } from '@/domain/people';
 import { REQUEST, ROLE_LABEL, roleViewerId } from '@/domain/workflow';
 import type { UserRole } from '@/domain/types';
@@ -28,7 +29,13 @@ const ROLE_OPTIONS: { value: UserRole; label: string }[] = [
   { value: 'admin', label: 'Admin' },
 ];
 
-export function RequestHeader() {
+export function RequestHeader({
+  showRoleHint,
+  onDismissRoleHint,
+}: {
+  showRoleHint: boolean;
+  onDismissRoleHint: () => void;
+}) {
   const { state, dispatch } = useWorkspace();
   const [shareOpen, setShareOpen] = useState(false);
   const watchers = WATCHER_IDS.map(person);
@@ -53,12 +60,17 @@ export function RequestHeader() {
 
       <AvatarStack people={watchers} />
 
-      <SegmentedControl
-        value={state.role}
-        options={ROLE_OPTIONS}
-        onChange={(role) => dispatch({ type: 'role/select', role })}
-        className="mr-[4px]"
-      />
+      <div className="relative mr-[4px]">
+        <SegmentedControl
+          value={state.role}
+          options={ROLE_OPTIONS}
+          onChange={(role) => {
+            dispatch({ type: 'role/select', role });
+            onDismissRoleHint();
+          }}
+        />
+        {showRoleHint && <RoleSwitchHint onClose={onDismissRoleHint} />}
+      </div>
 
       <Button
         onClick={() => dispatch({ type: 'following/toggle' })}

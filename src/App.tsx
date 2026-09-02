@@ -30,15 +30,23 @@ export default function App() {
 function RequestWorkspace() {
   const { dispatch } = useWorkspace();
   const [showOnboarding, setShowOnboarding] = useState(true);
+  const [showRoleHint, setShowRoleHint] = useState(false);
 
   return (
     <div className="flex h-screen overflow-hidden bg-surface-canvas">
-      {showOnboarding && <OnboardingModal onClose={() => setShowOnboarding(false)} />}
+      {showOnboarding && (
+        <OnboardingModal
+          onClose={() => {
+            setShowOnboarding(false);
+            setShowRoleHint(true);
+          }}
+        />
+      )}
       <AppRail />
 
       <div className="flex min-h-0 min-w-0 flex-1 flex-col">
         <div className="z-30 shrink-0 border-b border-border-default bg-surface-card">
-          <RequestHeader />
+          <RequestHeader showRoleHint={showRoleHint} onDismissRoleHint={() => setShowRoleHint(false)} />
           <StatStrip />
           <TabBar />
         </div>
