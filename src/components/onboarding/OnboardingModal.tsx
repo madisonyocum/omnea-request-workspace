@@ -16,7 +16,7 @@ const POINTS = [
   {
     Icon: ShieldCheck,
     title: 'Take real actions',
-    body: 'Approve, decline, or override — nothing here is a toast.',
+    body: 'Approve, decline, or override. Nothing here is just a toast.',
   },
 ];
 
@@ -49,8 +49,8 @@ export function OnboardingModal({ onClose }: { onClose: () => void }) {
           </div>
           <div className="flex flex-col items-center gap-[8px]">
             <h2 className="text-[21px] font-medium text-text-primary">Welcome to the prototype</h2>
-            <p className="max-w-[420px] text-[13px] leading-[1.55] text-text-muted">
-              This walks through a single procurement request — Mailchimp, OM-49 — as it moves through Omnea's
+            <p className="max-w-[420px] text-[13px] leading-[1.55] text-text-tertiary">
+              This walks through a single procurement request, Mailchimp OM-49, as it moves through Omnea's
               approval workflow.
             </p>
           </div>
@@ -64,7 +64,7 @@ export function OnboardingModal({ onClose }: { onClose: () => void }) {
               </span>
               <div className="flex flex-col items-center gap-[4px]">
                 <span className="text-[13px] font-medium text-text-primary">{title}</span>
-                <p className="text-[11px] leading-[1.5] text-text-muted">{body}</p>
+                <p className="text-[11px] leading-[1.5] text-text-tertiary">{body}</p>
               </div>
             </div>
           ))}
