@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { GitBranch, ShieldCheck, Users } from 'lucide-react';
+import { GitBranch, ShieldCheck, Users, Workflow } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 
 const POINTS = [
@@ -44,8 +44,8 @@ export function OnboardingModal({ onClose }: { onClose: () => void }) {
         className="animate-slide-up relative flex w-[600px] flex-col items-center overflow-hidden rounded-xl border border-border-default bg-surface-card text-center shadow-popover"
       >
         <div className="flex flex-col items-center gap-[18px] px-[48px] pb-[32px] pt-[48px]">
-          <div className="flex size-[56px] shrink-0 items-center justify-center rounded-[16px] bg-text-primary text-[26px] font-bold text-white">
-            O
+          <div className="flex size-[56px] shrink-0 items-center justify-center rounded-[16px] bg-brand-600 text-white">
+            <Workflow className="size-[26px]" strokeWidth={1.8} />
           </div>
           <div className="flex flex-col items-center gap-[8px]">
             <h2 className="text-[21px] font-medium text-text-primary">Welcome to the prototype</h2>
@@ -70,9 +70,9 @@ export function OnboardingModal({ onClose }: { onClose: () => void }) {
           ))}
         </div>
 
-        <div className="mt-[28px] w-full border-t border-border-subtle bg-surface-subtle px-[40px] py-[18px]">
+        <div className="mt-[8px] w-full px-[40px] pb-[40px]">
           <Button size="md" variant="primary" className="w-full" onClick={onClose}>
-            Explore the prototype
+            Explore Prototype
           </Button>
         </div>
       </div>
