@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Badge } from '@/components/ui/Pill';
 import { WORKFLOW_META } from '@/domain/workflow';
 import { useWorkspace } from '@/state/workspaceContext';
@@ -8,8 +9,18 @@ import { AlsoRunningCard } from './AlsoRunningCard';
 export function WorkflowTimeline() {
   const { state } = useWorkspace();
   const currentStage = state.stages.find((stage) => stage.status === 'current') ?? state.stages[0];
-  const leadStep =
-    currentStage.steps.find((step) => step.status !== 'complete') ?? currentStage.steps[currentStage.steps.length - 1];
+
+  // The focused step stays put once it's decided, so approving/declining it is
+  // visible as a colour change right where you're looking. "Open <next step>"
+  // in the approved state is the explicit way to move focus forward.
+  const [focusedId, setFocusedId] = useState<string | null>(null);
+  const [focusedStageId, setFocusedStageId] = useState(currentStage.id);
+  if (currentStage.id !== focusedStageId) {
+    setFocusedStageId(currentStage.id);
+    setFocusedId(null);
+  }
+
+  const leadStep = currentStage.steps.find((step) => step.id === focusedId) ?? currentStage.steps[0];
   const branchSteps = currentStage.steps.filter((step) => step.id !== leadStep.id);
 
   return (
@@ -26,7 +37,7 @@ export function WorkflowTimeline() {
       <div className="mt-[20px] flex items-start gap-[28px]">
         <PhaseRail stages={state.stages} />
         <div className="flex min-w-0 flex-1 flex-col gap-[12px]">
-          <ActiveStageCard stage={currentStage} step={leadStep} />
+          <ActiveStageCard stage={currentStage} step={leadStep} onFocusStep={setFocusedId} />
           <AlsoRunningCard steps={branchSteps} />
         </div>
       </div>

@@ -352,6 +352,47 @@ export const ROLE_ACTIVE_CARD: Record<UserRole, RoleActiveCardContent> = {
   },
 };
 
+export interface RoleApprovedContent {
+  /** {next}, {nextAssignee} and {time} are resolved against the real next step at render time. */
+  body: string;
+  metaCaption: string;
+  banner: { message: string; linkLabel: string };
+  /** Admin only — surfaces when the next line is itself overdue. */
+  escalation?: { message: string; linkLabel: string };
+  primaryLabel: string;
+  primaryKind: 'open-next' | 'back-to-queue';
+  secondaryLabel: string;
+}
+
+/** How the just-approved step reads for each viewer, once there's a next line to hand off to. */
+export const ROLE_APPROVED_CARD: Record<UserRole, RoleApprovedContent> = {
+  requester: {
+    body: 'Martha Nelson approved this stage just now. {next} is the last thing holding up the purchase order.',
+    metaCaption: '3 days in stage',
+    banner: { message: 'Approved by Martha Nelson · {time} · {next} unlocked', linkLabel: 'View approval' },
+    primaryLabel: 'Open {next}',
+    primaryKind: 'open-next',
+    secondaryLabel: 'View approval',
+  },
+  approver: {
+    body: 'You approved this stage at {time}. {next} is next — nothing else on this request needs you.',
+    metaCaption: '4 days in stage',
+    banner: { message: 'You approved this · {time} · {nextAssignee} notified', linkLabel: 'View approval' },
+    primaryLabel: 'Back to my approvals',
+    primaryKind: 'back-to-queue',
+    secondaryLabel: 'View approval',
+  },
+  admin: {
+    body: 'Martha Nelson approved at {time}, inside the 3-day SLA. {next} is now the critical path — overdue by 2 days.',
+    metaCaption: '3 days in stage · SLA 3 days',
+    banner: { message: 'Approved by Martha Nelson · {time} · logged to audit trail', linkLabel: 'View audit log' },
+    escalation: { message: '{next} overdue 2 days · auto-escalated to Priya Raman', linkLabel: 'Override & advance' },
+    primaryLabel: 'Open {next}',
+    primaryKind: 'open-next',
+    secondaryLabel: 'View audit log',
+  },
+};
+
 export interface RoleAlsoRunningContent {
   heading: string;
   /** Approvers only view the other lines; requesters and admins can act on them. */

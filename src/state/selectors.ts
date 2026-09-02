@@ -27,6 +27,9 @@ export function runningSteps(stages: WorkflowStage[]): WorkflowStep[] {
  */
 export function statStrip(state: WorkspaceState): StatItem[] {
   const running = runningSteps(state.stages);
+  const approvalsStage = state.stages.find((stage) => stage.id === 'stage-3');
+  const leadStep = approvalsStage?.steps[0];
+  const leadDecided = leadStep?.status === 'complete';
 
   return STAT_STRIP.map((stat) => {
     if (stat.id === 'stage' && stat.meter) {
@@ -39,7 +42,11 @@ export function statStrip(state: WorkspaceState): StatItem[] {
 
     if (stat.id === 'waiting') {
       // The approver's tile reframes entirely around their own decision.
-      if (state.role === 'approver') return ROLE_STAT.approver;
+      if (state.role === 'approver') {
+        return leadDecided
+          ? { id: 'decision', label: 'Your decision', value: 'Approved', caption: 'Budget approval notified' }
+          : ROLE_STAT.approver;
+      }
 
       if (running.length === 0) {
         return { ...stat, value: 'Nobody', caption: 'All stage actions complete', personId: undefined };
@@ -47,12 +54,24 @@ export function statStrip(state: WorkspaceState): StatItem[] {
       const [first, ...rest] = running;
       const owner = person(first.assigneeId);
       const roleStat = ROLE_STAT[state.role];
+      const overdue = first.status === 'overdue';
       const suffix = rest.length > 0 ? `+${rest.length} more · ` : '';
+
+      if (state.role === 'admin') {
+        return {
+          ...stat,
+          value: owner.name,
+          caption: overdue ? `${first.name} overdue` : roleStat.caption,
+          captionTone: overdue ? 'danger' : roleStat.captionTone,
+          tone: overdue ? 'danger' : undefined,
+          personId: owner.id,
+        };
+      }
+
       return {
         ...stat,
         value: owner.name,
-        caption: state.role === 'admin' ? roleStat.caption : `${suffix}longest 3 days`,
-        captionTone: roleStat.captionTone,
+        caption: `${suffix}longest 3 days`,
         personId: owner.id,
       };
     }
