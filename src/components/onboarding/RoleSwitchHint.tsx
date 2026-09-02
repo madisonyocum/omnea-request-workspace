@@ -1,3 +1,5 @@
+import { Zap } from 'lucide-react';
+
 export function RoleSwitchHint({ onClose }: { onClose: () => void }) {
   return (
     <>
@@ -8,16 +10,19 @@ export function RoleSwitchHint({ onClose }: { onClose: () => void }) {
         className="animate-fade-in absolute right-0 top-full z-50 mt-[12px] w-max rounded-xl bg-text-primary p-[16px] text-white shadow-popover"
       >
         <span className="absolute -top-[6px] right-[28px] size-[12px] rotate-45 bg-text-primary" />
-        <p className="text-[13px] font-medium">3 ways to view this prototype</p>
+        <div className="flex size-[28px] items-center justify-center rounded-md bg-brand-600">
+          <Zap className="size-[15px] text-white" strokeWidth={2} fill="currentColor" />
+        </div>
+        <p className="mt-[10px] text-[13px] font-medium">3 ways to view this prototype</p>
         <ul className="mt-[10px] flex flex-col gap-[7px]">
           <li className="text-[12px] leading-[1.4] whitespace-nowrap text-white/75">
-            <span className="font-medium text-white">Requester</span> — submitted the request.
+            <span className="font-medium text-white">Requester</span>: submitted the request.
           </li>
           <li className="text-[12px] leading-[1.4] whitespace-nowrap text-white/75">
-            <span className="font-medium text-white">Approver</span> — reviews and signs off.
+            <span className="font-medium text-white">Approver</span>: reviews and signs off.
           </li>
           <li className="text-[12px] leading-[1.4] whitespace-nowrap text-white/75">
-            <span className="font-medium text-white">Admin</span> — oversees the workflow.
+            <span className="font-medium text-white">Admin</span>: oversees the workflow.
           </li>
         </ul>
         <button
