@@ -5,19 +5,19 @@ export function RoleSwitchHint({ onClose }: { onClose: () => void }) {
       <div
         role="dialog"
         aria-label="Switch between roles"
-        className="animate-fade-in absolute right-0 top-full z-50 mt-[12px] w-[280px] rounded-xl bg-text-primary p-[16px] text-white shadow-popover"
+        className="animate-fade-in absolute right-0 top-full z-50 mt-[12px] w-max rounded-xl bg-text-primary p-[16px] text-white shadow-popover"
       >
         <span className="absolute -top-[6px] right-[28px] size-[12px] rotate-45 bg-text-primary" />
-        <p className="text-[13px] font-medium">Three ways to view this request</p>
-        <ul className="mt-[10px] flex flex-col gap-[8px]">
-          <li className="text-[12px] leading-[1.45] text-white/75">
-            <span className="font-medium text-white">Requester</span> — the person who submitted it.
+        <p className="text-[13px] font-medium">3 ways to view this prototype</p>
+        <ul className="mt-[10px] flex flex-col gap-[7px]">
+          <li className="text-[12px] leading-[1.4] whitespace-nowrap text-white/75">
+            <span className="font-medium text-white">Requester</span> — submitted the request.
           </li>
-          <li className="text-[12px] leading-[1.45] text-white/75">
-            <span className="font-medium text-white">Approver</span> — reviews and signs off each stage.
+          <li className="text-[12px] leading-[1.4] whitespace-nowrap text-white/75">
+            <span className="font-medium text-white">Approver</span> — reviews and signs off.
           </li>
-          <li className="text-[12px] leading-[1.45] text-white/75">
-            <span className="font-medium text-white">Admin</span> — oversees the whole workflow.
+          <li className="text-[12px] leading-[1.4] whitespace-nowrap text-white/75">
+            <span className="font-medium text-white">Admin</span> — oversees the workflow.
           </li>
         </ul>
         <button
