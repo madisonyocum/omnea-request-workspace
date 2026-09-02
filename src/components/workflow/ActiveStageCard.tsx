@@ -1,4 +1,4 @@
-import { AlertTriangle, Check, ChevronRight, MoreHorizontal, Paperclip } from 'lucide-react';
+import { AlertTriangle, Bell, Check, ChevronRight, MoreHorizontal, Paperclip } from 'lucide-react';
 import { cn } from '@/lib/cn';
 import { Button } from '@/components/ui/Button';
 import { DotPill } from '@/components/ui/Pill';
@@ -192,6 +192,12 @@ export function ActiveStageCard({
           <span className="text-[12px] font-medium text-text-primary">{meta.name}</span>
           <span className="text-[12px] text-text-disabled">·</span>
           <span className="text-[9px] font-medium text-text-tertiary">{content.meta.caption}</span>
+          {step.meta?.icon === 'bell' && (
+            <span className="inline-flex items-center gap-[5px] rounded-[7px] bg-warning-50 py-[4px] pl-[7px] pr-[9px]">
+              <Bell className="size-[11px] shrink-0 text-warning-600" strokeWidth={1.8} />
+              <span className="text-[9px] font-medium text-warning-700">{step.meta.label}</span>
+            </span>
+          )}
           <span className="flex-1" />
           {visibleFiles.length > 0 && (
             <div className="flex items-center gap-[8px]">

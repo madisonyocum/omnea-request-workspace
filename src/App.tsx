@@ -39,8 +39,8 @@ function RequestWorkspace() {
           <TabBar />
         </div>
 
-        <main className="min-h-0 min-w-0 flex-1 overflow-hidden py-[14px]">
-          <div className="mx-auto h-full min-h-0 w-[98%]">
+        <main className="min-h-0 min-w-0 flex-1 overflow-hidden px-[24px] py-[14px]">
+          <div className="h-full min-h-0">
             <ActiveView />
           </div>
         </main>

@@ -9,14 +9,14 @@ export function PhaseRail({ stages }: { stages: WorkflowStage[] }) {
   const accent = ROLE_ACCENT[state.role];
 
   return (
-    <div className="flex w-[320px] shrink-0 flex-col gap-[4px]">
+    <div className="flex w-[320px] shrink-0 flex-col gap-[1px]">
       {stages.map((stage) => {
         const complete = stage.steps.filter((step) => step.status === 'complete').length;
         return (
           <div
             key={stage.id}
             className={cn(
-              'flex items-center gap-[12px] rounded-[12px] px-[16px] py-[14px]',
+              'flex items-center gap-[12px] rounded-[10px] px-[16px] py-[9px]',
               stage.status === 'current' && accent.tint,
             )}
           >
