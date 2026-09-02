@@ -270,7 +270,7 @@ export function roleViewerId(role: UserRole, stages: WorkflowStage[]): string {
 
 export const ROLE_TASKS_TAB: Record<UserRole, { label: string }> = {
   requester: { label: 'My tasks' },
-  approver: { label: 'My approvals' },
+  approver: { label: 'Tasks' },
   admin: { label: 'Queue' },
 };
 
