@@ -268,18 +268,6 @@ export function roleViewerId(role: UserRole, stages: WorkflowStage[]): string {
   return current?.steps[0]?.assigneeId ?? 'martha';
 }
 
-export const ROLE_TASKS_TAB: Record<UserRole, { label: string }> = {
-  requester: { label: 'Tasks' },
-  approver: { label: 'Tasks' },
-  admin: { label: 'Tasks' },
-};
-
-/** Approver/admin queues aren't backed by real per-request data — flavour counts only. */
-export const ROLE_TASKS_COUNT: Partial<Record<UserRole, number>> = {
-  approver: 3,
-  admin: 12,
-};
-
 /**
  * Admin's "Waiting on" caption when the blocking step isn't (yet) overdue —
  * keyed by stage id so a phase that just started doesn't inherit another
