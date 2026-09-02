@@ -40,11 +40,11 @@ export function OnboardingModal({ onClose }: { onClose: () => void }) {
       <div
         role="dialog"
         aria-modal="true"
-        aria-label="Request Prototype"
+        aria-label="Welcome to the Request Prototype"
         className="animate-slide-up relative flex w-[600px] flex-col items-center overflow-hidden rounded-xl border border-border-default bg-surface-card text-center shadow-popover"
       >
         <div className="flex flex-col items-center gap-[8px] px-[48px] pb-[32px] pt-[48px]">
-          <h2 className="text-[21px] font-medium text-text-primary">Request Prototype</h2>
+          <h2 className="text-[21px] font-medium text-text-primary">Welcome to the Request Prototype</h2>
           <p className="max-w-[420px] text-[13px] leading-[1.55] text-text-tertiary">
             This walks through a single procurement request, Mailchimp OM-49, as it moves through Omnea's
             approval workflow.

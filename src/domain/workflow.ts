@@ -270,9 +270,9 @@ export function roleViewerId(role: UserRole, stages: WorkflowStage[]): string {
 }
 
 export const ROLE_TASKS_TAB: Record<UserRole, { label: string }> = {
-  requester: { label: 'My tasks' },
+  requester: { label: 'Tasks' },
   approver: { label: 'Tasks' },
-  admin: { label: 'Queue' },
+  admin: { label: 'Tasks' },
 };
 
 /** Approver/admin queues aren't backed by real per-request data — flavour counts only. */
@@ -527,7 +527,7 @@ export const ROLE_APPROVED_CARD: Record<string, Record<UserRole, RoleApprovedCon
       body: 'You approved this stage at {time}. {next} is next, nothing else on this request needs you.',
       metaCaption: '4 days in stage',
       banner: { message: 'You approved this · {time} · {nextAssignee} notified', linkLabel: 'View approval' },
-      primaryLabel: 'Back to my approvals',
+      primaryLabel: 'Next action',
       primaryKind: 'back-to-queue',
       secondaryLabel: 'View approval',
     },
@@ -554,7 +554,7 @@ export const ROLE_APPROVED_CARD: Record<string, Record<UserRole, RoleApprovedCon
       body: 'You approved this stage at {time}. {next} is next, nothing else on this request needs you.',
       metaCaption: '1 day in stage',
       banner: { message: 'You approved this · {time} · {nextAssignee} notified', linkLabel: 'View approval' },
-      primaryLabel: 'Back to my approvals',
+      primaryLabel: 'Next action',
       primaryKind: 'back-to-queue',
       secondaryLabel: 'View approval',
     },
