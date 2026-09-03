@@ -30,4 +30,4 @@ export function person(id: string): Person {
 }
 
 /** Watchers shown as the overlapping avatar stack in the request header. */
-export const WATCHER_IDS = ['sam', 'jk', 'amir', 'ben'];
+export const WATCHER_IDS = ['sam', 'jk', 'amir'];

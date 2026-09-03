@@ -26,7 +26,6 @@ export const STAT_STRIP: StatItem[] = [
     caption: '+1 more · longest 3 days',
     personId: 'martha',
   },
-  { id: 'assurance', label: 'Assurance', value: 'SOC 2 valid', caption: 'DPA awaiting signature' },
 ];
 
 export const WORKFLOW_META = {
