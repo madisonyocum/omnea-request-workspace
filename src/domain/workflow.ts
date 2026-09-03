@@ -510,9 +510,7 @@ export const ROLE_APPROVED_CARD: Record<string, Record<UserRole, RoleApprovedCon
       body: 'You approved this stage at {time}. {next} is next, nothing else on this request needs you.',
       metaCaption: '4 days in stage',
       banner: { message: 'You approved this · {time} · {nextAssignee} notified', linkLabel: 'View approval' },
-      primaryLabel: 'Next action',
-      primaryKind: 'back-to-queue',
-      secondaryLabel: 'View approval',
+      secondaryLabel: 'View details',
     },
     admin: {
       body: 'Martha Nelson approved at {time}, inside the 3-day SLA. {next} is now the critical path{nextCritical}.',
@@ -537,9 +535,7 @@ export const ROLE_APPROVED_CARD: Record<string, Record<UserRole, RoleApprovedCon
       body: 'You approved this stage at {time}. {next} is next, nothing else on this request needs you.',
       metaCaption: '1 day in stage',
       banner: { message: 'You approved this · {time} · {nextAssignee} notified', linkLabel: 'View approval' },
-      primaryLabel: 'Next action',
-      primaryKind: 'back-to-queue',
-      secondaryLabel: 'View approval',
+      secondaryLabel: 'View details',
     },
     admin: {
       body: 'Sadie Bernard approved at {time}, inside the 5-day SLA. {next} is now the critical path{nextCritical}.',
