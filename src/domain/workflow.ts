@@ -146,13 +146,13 @@ export const WORKFLOW_STAGES: WorkflowStage[] = [
       },
       {
         id: 'legal-review',
-        name: 'Legal review',
+        name: 'Legal approval',
         assigneeId: 'angelina',
         status: 'waiting',
         lineStatus: { label: 'Not started · waiting on DPA', tone: 'neutral' },
         lineMeta: 'Queued behind Budget approval · Est. 3 days · DPA requested 1 Jun · 1 file',
         detail: {
-          summary: 'Legal review of the MSA and DPA, including the data retention clause raised by Robert Fox.',
+          summary: 'Legal approval of the MSA and DPA, including the data retention clause raised by Robert Fox.',
           slaLabel: 'Not started · SLA 5 days',
           history: [{ at: '27 May, 11:06', label: 'Queued behind Budget approval', actor: 'Automation' }],
           attachments: [{ name: 'Mailchimp - Contract-v3.pdf', size: '820 KB' }],
@@ -380,7 +380,7 @@ export const ROLE_ACTIVE_CARD: Record<string, Record<UserRole, RoleActiveCardCon
     admin: {
       duePill: 'Overdue',
       contextLabel: 'APPROVALS · STAGE 2 OF 3',
-      body: '{assignee} is 2 days past the 3-day SLA on the £48,000 budget. Legal review and the purchase order are both blocked behind this line.',
+      body: '{assignee} is 2 days past the 3-day SLA on the £48,000 budget. Legal approval and the purchase order are both blocked behind this line.',
       meta: { personId: 'assignee', caption: 'Due 29 May · 4 days in stage · SLA 3 days' },
       actions: [
         { label: 'Send reminder', variant: 'dark', kind: 'remind' },
@@ -445,7 +445,7 @@ export const ROLE_DECLINED_CARD: Record<string, Record<UserRole, RoleDeclinedCon
   'budget-approval': {
     requester: {
       contextLabel: 'APPROVALS · STAGE 2 OF 3 · DECLINED',
-      body: 'Jaslyn Moore declined the £48,000 budget on {time}. Legal review has been cancelled and the purchase order is on hold until you resubmit.',
+      body: 'Jaslyn Moore declined the £48,000 budget on {time}. Legal approval has been cancelled and the purchase order is on hold until you resubmit.',
       reasonBanner: {
         message: 'Reason: not enough budget left this quarter, resubmit with a revised amount or move to Q3',
         linkLabel: 'View decline note',
@@ -463,13 +463,13 @@ export const ROLE_DECLINED_CARD: Record<string, Record<UserRole, RoleDeclinedCon
     },
     admin: {
       contextLabel: 'APPROVALS · STAGE 2 OF 3 · DECLINED',
-      body: 'Jaslyn Moore declined the £48,000 budget on {time}, 5 days into a 3-day SLA. Legal review was auto-cancelled and the purchase order is on hold.',
+      body: 'Jaslyn Moore declined the £48,000 budget on {time}, 5 days into a 3-day SLA. Legal approval was auto-cancelled and the purchase order is on hold.',
       reasonBanner: {
         message: 'Declined by Jaslyn Moore · {time} · reason and decision logged to audit trail',
         linkLabel: 'View audit log',
       },
       notifyBanner: {
-        message: 'Ben Williams notified {time} · Legal review auto-cancelled · PO on hold',
+        message: 'Ben Williams notified {time} · Legal approval auto-cancelled · PO on hold',
         linkLabel: 'Reopen stage',
       },
       linkLabel: 'Audit trail',

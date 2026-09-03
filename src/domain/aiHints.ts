@@ -46,7 +46,7 @@ export const AI_HINTS: Record<UserRole, Record<string, AiHintCopy>> = {
       hint: 'This approval is likely to take longer than similar requests, let’s find a faster solution.',
       action: 'Suggest a faster route',
       detail:
-        '{step} has been with {owner} the longest. A reminder clears it fastest, legal review is queued behind it.',
+        '{step} has been with {owner} the longest. A reminder clears it fastest, legal approval is queued behind it.',
       cta: { label: 'Remind {first}', kind: 'remind' },
     },
     'stage-4': {
@@ -89,7 +89,7 @@ export const AI_HINTS: Record<UserRole, Record<string, AiHintCopy>> = {
       hint: 'Deciding today keeps this request inside its SLA, tomorrow it breaches.',
       action: 'See what your decision unblocks',
       detail:
-        '{step} is still open with {owner}, and legal review is queued behind your line. Both move the moment you decide.',
+        '{step} is still open with {owner}, and legal approval is queued behind your line. Both move the moment you decide.',
       cta: { label: 'Remind {first}', kind: 'remind' },
     },
     'stage-4': {
