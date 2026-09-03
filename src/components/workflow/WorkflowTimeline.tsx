@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Badge } from '@/components/ui/Pill';
 import { WORKFLOW_META } from '@/domain/workflow';
 import { useWorkspace } from '@/state/workspaceContext';
+import { AiHint } from './AiHint';
 import { PhaseRail } from './PhaseRail';
 import { ActiveStageCard } from './ActiveStageCard';
 import { AlsoRunningCard } from './AlsoRunningCard';
@@ -49,7 +50,10 @@ export function WorkflowTimeline() {
       </header>
 
       <div className="mt-[20px] flex items-stretch gap-[28px]">
-        <PhaseRail stages={state.stages} viewedStageId={viewedStage.id} onSelect={setViewedStageId} />
+        <div className="flex w-[320px] shrink-0 flex-col">
+          <PhaseRail stages={state.stages} viewedStageId={viewedStage.id} onSelect={setViewedStageId} />
+          <AiHint stage={viewedStage} />
+        </div>
         <div className="flex min-w-0 flex-1 flex-col gap-[12px]">
           <ActiveStageCard stage={viewedStage} step={leadStep} onFocusStep={setFocusedId} />
           <AlsoRunningCard steps={branchSteps} onFocusStep={setFocusedId} />

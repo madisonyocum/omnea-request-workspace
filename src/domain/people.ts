@@ -14,7 +14,7 @@ export const PEOPLE: Record<string, Person> = {
   netsuite: { id: 'netsuite', name: 'Netsuite', initials: 'N', colour: '#292e38', jobTitle: 'Integration' },
   anna: { id: 'anna', name: 'Anna Smith', initials: 'AS', colour: '#7a5af8', jobTitle: 'Procurement analyst' },
   robert: { id: 'robert', name: 'Robert Fox', initials: 'RF', colour: '#2e90fa', jobTitle: 'Legal counsel' },
-  sam: { id: 'sam', name: 'Sam Roberts', initials: 'SR', colour: '#f04438', jobTitle: 'Security lead' },
+  sam: { id: 'sam', name: 'Sam Roberts', initials: 'SR', colour: '#7a5af8', jobTitle: 'Security lead' },
   lena: { id: 'lena', name: 'Lena Marsh', initials: 'LM', colour: '#12b76a', jobTitle: 'Legal ops' },
   john: { id: 'john', name: 'John Smith', initials: 'JS', colour: '#7a5af8', jobTitle: 'Procurement' },
   ben: { id: 'ben', name: 'Ben Williams', initials: 'BW', colour: '#12b76a', jobTitle: 'Marketing' },
