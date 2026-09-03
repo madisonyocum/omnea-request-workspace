@@ -58,7 +58,7 @@ export function WorkflowTimeline() {
           key={`${viewedStage.id}:${leadStep.id}`}
           className="flex min-w-0 flex-1 flex-col gap-[12px]"
         >
-          <div className="animate-swap-in flex flex-1">
+          <div className="animate-swap-in-slow flex flex-1">
             <ActiveStageCard stage={viewedStage} step={leadStep} onFocusStep={setFocusedId} />
           </div>
           {branchSteps.length > 0 && (

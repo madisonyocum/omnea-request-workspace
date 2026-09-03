@@ -327,7 +327,6 @@ export const ROLE_ACTIVE_CARD: Record<string, Record<UserRole, RoleActiveCardCon
       meta: { personId: 'assignee', caption: 'Due 1 Jun · 3 days in stage' },
       actions: [
         { label: 'Send reminder', variant: 'dark', kind: 'remind' },
-        { label: 'Reassign approver', variant: 'secondary', kind: 'reassign' },
       ],
       linkLabel: 'More details',
     },
@@ -367,7 +366,6 @@ export const ROLE_ACTIVE_CARD: Record<string, Record<UserRole, RoleActiveCardCon
       meta: { personId: 'assignee', caption: 'Due 29 May · 4 days in stage' },
       actions: [
         { label: 'Send reminder', variant: 'dark', kind: 'remind' },
-        { label: 'Reassign approver', variant: 'secondary', kind: 'reassign' },
       ],
       linkLabel: 'More details',
     },
@@ -400,7 +398,6 @@ export const ROLE_ACTIVE_CARD: Record<string, Record<UserRole, RoleActiveCardCon
       meta: { personId: 'assignee', caption: 'Started 6 Jun · SLA 5 days' },
       actions: [
         { label: 'Send reminder', variant: 'dark', kind: 'remind' },
-        { label: 'Reassign approver', variant: 'secondary', kind: 'reassign' },
       ],
       linkLabel: 'More details',
     },
@@ -585,7 +582,11 @@ export const ROLE_ACCENT: Record<UserRole, { tint: string; dot: string; rail: st
  * step data — still live, just not role-flavoured — so nothing crashes or
  * shows placeholder copy when you click Intake, Engagement, etc.
  */
-export function genericActiveCardContent(step: WorkflowStep, stage: WorkflowStage): RoleActiveCardContent {
+export function genericActiveCardContent(
+  step: WorkflowStep,
+  stage: WorkflowStage,
+  role: UserRole,
+): RoleActiveCardContent {
   const isPreview = stage.status === 'upcoming';
   return {
     duePill: step.pill?.label ?? step.caption ?? (isPreview ? 'Not started' : 'In progress'),
@@ -596,7 +597,10 @@ export function genericActiveCardContent(step: WorkflowStep, stage: WorkflowStag
       ? []
       : (step.actions ?? []).flatMap((action): RoleActionButton[] => {
           if (action === 'remind') return [{ label: 'Send reminder', variant: 'dark', kind: 'remind' }];
-          if (action === 'reassign') return [{ label: 'Reassign', variant: 'secondary', kind: 'reassign' }];
+          // Reassigning an approver is an admin/procurement action — requesters can only chase.
+          if (action === 'reassign' && role !== 'requester') {
+            return [{ label: 'Reassign', variant: 'secondary', kind: 'reassign' }];
+          }
           return [];
         }),
     linkLabel: 'More details',

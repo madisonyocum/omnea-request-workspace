@@ -49,10 +49,10 @@ export function AlsoRunningCard({
             }}
             // Each line lands a beat after the one above it, so the card builds
             // downwards rather than appearing all at once.
-            style={{ animationDelay: `${60 + index * 45}ms` }}
+            style={{ animationDelay: `${90 + index * 70}ms` }}
             className={cn(
               // The hover fill fades both ways rather than snapping on and off.
-              'animate-swap-in flex cursor-pointer flex-col gap-[7px] border-t border-border-subtle bg-surface-subtle/0 px-[22px] pb-[14px] pt-[13px] transition-[background-color,transform] duration-300 ease-out hover:bg-surface-subtle/100 active:scale-[0.995]',
+              'animate-swap-in-slow flex cursor-pointer flex-col gap-[7px] border-t border-border-subtle bg-surface-subtle/0 px-[22px] pb-[14px] pt-[13px] transition-[background-color,transform] duration-300 ease-out hover:bg-surface-subtle/100 active:scale-[0.995]',
               resolved && 'opacity-70',
             )}
           >
@@ -109,7 +109,11 @@ export function AlsoRunningCard({
                   onFocusStep(step.id);
                 }}
               >
-                {resolved || content.viewOnly ? 'View' : step.actions?.includes('reassign') ? 'Reassign' : 'Nudge'}
+                {resolved || content.viewOnly
+                  ? 'View'
+                  : state.role !== 'requester' && step.actions?.includes('reassign')
+                    ? 'Reassign'
+                    : 'Nudge'}
               </Button>
             </div>
             {!resolved && step.lineMeta && (

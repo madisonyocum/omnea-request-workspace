@@ -41,10 +41,12 @@ interface StepDrawerBodyProps {
 }
 
 function StepDrawerBody({ step, stage, onOpenTab, onClose }: StepDrawerBodyProps) {
-  const { dispatch } = useWorkspace();
+  const { state, dispatch } = useWorkspace();
   const assignee = person(step.assigneeId);
   const status = STATUS_LABEL[step.status];
   const actions = step.actions ?? [];
+  // Reassigning an approver is an admin/procurement action — requesters can only chase.
+  const canReassign = state.role !== 'requester';
 
   return (
     <Drawer
@@ -93,7 +95,7 @@ function StepDrawerBody({ step, stage, onOpenTab, onClose }: StepDrawerBodyProps
               Send reminder
             </Button>
           )}
-          {actions.includes('reassign') && (
+          {actions.includes('reassign') && canReassign && (
             <Menu
               align="start"
               width={190}

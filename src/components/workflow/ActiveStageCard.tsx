@@ -29,7 +29,7 @@ export function ActiveStageCard({
   onFocusStep: (stepId: string) => void;
 }) {
   const { state, dispatch } = useWorkspace();
-  const content = ROLE_ACTIVE_CARD[step.id]?.[state.role] ?? genericActiveCardContent(step, stage);
+  const content = ROLE_ACTIVE_CARD[step.id]?.[state.role] ?? genericActiveCardContent(step, stage, state.role);
   const files = step.detail.attachments;
   const visibleFiles = files.slice(0, 2);
   const moreFiles = files.length - visibleFiles.length;
