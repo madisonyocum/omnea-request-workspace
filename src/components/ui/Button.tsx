@@ -19,14 +19,16 @@ const SIZES: Record<Size, string> = {
   md: 'rounded-md px-[20px] py-[10px] text-[13px] font-medium',
 };
 
+/** Primary actions are ink rather than brand purple, so purple stays a highlight colour. */
+const INK = 'bg-surface-rail-active text-white hover:bg-[#232428] active:bg-[#232428] disabled:hover:bg-surface-rail-active';
+
 const VARIANTS: Record<Variant, string> = {
-  primary:
-    'bg-brand-600 text-white shadow-brand hover:bg-brand-700 active:bg-brand-700 disabled:hover:bg-brand-600',
+  primary: INK,
   secondary:
     'border border-border-strong bg-surface-card text-text-secondary hover:bg-surface-subtle active:bg-surface-sunken',
   ghost: 'text-text-tertiary hover:bg-surface-sunken hover:text-text-secondary',
-  /** The workflow card's own primary action — ink, not brand purple, so it doesn't compete with links. */
-  dark: 'bg-surface-rail-active text-white hover:bg-[#232428] active:bg-[#232428]',
+  /** Retained as an alias for call sites that ask for ink explicitly. */
+  dark: INK,
 };
 
 export function Button({ variant = 'secondary', size = 'sm', icon, children, className, ...rest }: ButtonProps) {

@@ -83,7 +83,7 @@ export const INTAKE_GROUPS: IntakeGroup[] = [
         required: true,
         kind: 'chips',
         options: [
-          { id: 'currency', label: 'USD $' },
+          { id: 'currency', label: 'GBP £' },
           { id: 'amount', label: '20,000' },
           { id: 'cadence', label: 'Per year' },
         ],

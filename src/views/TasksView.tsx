@@ -32,7 +32,7 @@ export function TasksView() {
           label: task.name,
           status: {
             label: flagged > 0 ? 'Needs changes' : complete ? 'Ready to submit' : 'Required',
-            tone: flagged > 0 ? ('active' as const) : complete ? ('complete' as const) : ('active' as const),
+            tone: flagged > 0 ? ('attention' as const) : complete ? ('complete' as const) : ('required' as const),
           },
           flagCount: flagged,
         };

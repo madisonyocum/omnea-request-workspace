@@ -2,10 +2,17 @@ import { Flag } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { cn } from '@/lib/cn';
 
+/**
+ * Each tone carries a meaning, so the dot reads without the label: green is
+ * done, red needs fixing, amber is outstanding work, grey is somebody else's
+ * turn.
+ */
+export type SectionStatusTone = 'complete' | 'attention' | 'required' | 'pending';
+
 export interface SectionNavItem {
   id: string;
   label: string;
-  status?: { label: string; tone: 'active' | 'pending' | 'complete' };
+  status?: { label: string; tone: SectionStatusTone };
   /** Open issues raised against this section's answers. */
   flagCount?: number;
 }
@@ -16,11 +23,12 @@ export interface SectionNavGroup {
   items: SectionNavItem[];
 }
 
-const DOT_TONE = {
-  active: 'bg-brand-600',
+const DOT_TONE: Record<SectionStatusTone, string> = {
   complete: 'bg-success-500',
+  attention: 'bg-danger-500',
+  required: 'bg-warning-400',
   pending: 'bg-text-disabled',
-} as const;
+};
 
 /**
  * The two-column form shell shared by My tasks, Intake and Submissions:
@@ -65,19 +73,12 @@ export function SplitFormCard({
                   onClick={() => onSelect(item.id)}
                   className={cn(
                     'relative flex w-full cursor-pointer items-center gap-[10px] border-b border-border-subtle py-[13px] pl-[18px] pr-[16px] text-left transition-colors duration-150',
-                    active ? 'bg-surface-brand-subtle' : 'hover:bg-surface-subtle',
+                    active ? 'bg-surface-subtle' : 'hover:bg-surface-subtle',
                   )}
                 >
-                  {active && <span className="absolute inset-y-0 left-0 w-[3px] bg-brand-600" />}
+                  {active && <span className="absolute inset-y-0 left-0 w-[3px] bg-text-primary" />}
                   <span className="flex min-w-0 flex-1 flex-col gap-[4px]">
-                    <span
-                      className={cn(
-                        'truncate text-[13px] font-medium',
-                        active ? 'text-brand-700' : 'text-text-primary',
-                      )}
-                    >
-                      {item.label}
-                    </span>
+                    <span className="truncate text-[13px] font-medium text-text-primary">{item.label}</span>
                     {item.status && (
                       <span className="flex items-center gap-[6px]">
                         <span className={cn('size-[7px] shrink-0 rounded-full', DOT_TONE[item.status.tone])} />

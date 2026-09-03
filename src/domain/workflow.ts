@@ -16,7 +16,7 @@ export const STAT_STRIP: StatItem[] = [
     caption: 'Approvals phase · 2 running',
     meter: { total: 9, complete: 2, running: 2 },
   },
-  { id: 'value', label: 'Value', value: '$20,000 / yr', caption: 'Marketing · in budget' },
+  { id: 'value', label: 'Value', value: '£20,000 / yr', caption: 'Marketing · in budget' },
   { id: 'due', label: 'Due', value: 'Mon, 18 Jun', caption: 'On track' },
   { id: 'risk', label: 'Risk', value: '13', caption: '7 open · 1 high', tone: 'danger' },
   {

@@ -82,8 +82,8 @@ export const SUBMISSION_FORMS: SubmissionForm[] = [
         required: true,
         kind: 'text',
         fields: [
-          { label: 'Professional indemnity', value: '$10,000,000' },
-          { label: 'Cyber liability', value: '$5,000,000' },
+          { label: 'Professional indemnity', value: '£10,000,000' },
+          { label: 'Cyber liability', value: '£5,000,000' },
         ],
       },
     ],
