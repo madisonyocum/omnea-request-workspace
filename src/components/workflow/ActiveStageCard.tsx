@@ -72,7 +72,7 @@ export function ActiveStageCard({
               <DotPill tone="muted">Cancelled</DotPill>
             </div>
             <p className="text-[13px] text-text-secondary">
-              {lastEvent ? lastEvent.label : 'This line was cancelled.'} Nothing further is needed here.
+              {lastEvent ? lastEvent.label : 'This stage was cancelled.'} Nothing further is needed here.
             </p>
           </div>
           <button

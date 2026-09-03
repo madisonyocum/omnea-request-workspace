@@ -89,11 +89,11 @@ export const AI_HINTS: Record<UserRole, Record<string, AiHintCopy>> = {
       hint: 'Deciding today keeps this request inside its SLA, tomorrow it breaches.',
       action: 'See what your decision unblocks',
       detail:
-        '{step} is still open with {owner}, and legal approval is queued behind your line. Both move the moment you decide.',
+        '{step} is still open with {owner}, and legal approval is queued behind your stage. Both move the moment you decide.',
       cta: { label: 'Remind {first}', kind: 'remind' },
     },
     'stage-4': {
-      hint: 'Reviews run after your line, so your decision is not waiting on them.',
+      hint: 'Reviews run after your stage, so your decision is not waiting on them.',
       action: 'See the sequence',
       detail:
         'Security and finance both start once approvals close, they will not send anything back to you unless a risk is raised.',

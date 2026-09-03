@@ -239,7 +239,7 @@ export function workspaceReducer(state: WorkspaceState, action: WorkspaceAction)
         return withToast(
           { ...state, stages },
           cascaded.length > 0
-            ? `${step.name} declined - ${cascaded.length} downstream line${cascaded.length === 1 ? '' : 's'} cancelled.`
+            ? `${step.name} declined - ${cascaded.length} downstream stage${cascaded.length === 1 ? '' : 's'} cancelled.`
             : `${step.name} declined - the requester has been notified.`,
           'danger',
         );
@@ -310,7 +310,7 @@ export function workspaceReducer(state: WorkspaceState, action: WorkspaceAction)
 
       return withToast(
         { ...state, stages },
-        `${step.name} reopened - cancelled lines behind it are reinstated.`,
+        `${step.name} reopened - cancelled stages behind it are reinstated.`,
       );
     }
 

@@ -332,7 +332,7 @@ export const ROLE_ACTIVE_CARD: Record<string, Record<UserRole, RoleActiveCardCon
     },
     approver: {
       duePill: 'Needs your decision',
-      contextLabel: 'YOUR LINE · APPROVALS · STAGE 1 OF 3',
+      contextLabel: 'YOUR STAGE · APPROVALS · STAGE 1 OF 3',
       body: 'Ben Williams sent this to you on 4 Jun. Approving here unblocks Budget approval and the purchase order.',
       meta: { personId: 'ben', caption: 'Requested 4 Jun · Waiting 2 days' },
       actions: [
@@ -372,7 +372,7 @@ export const ROLE_ACTIVE_CARD: Record<string, Record<UserRole, RoleActiveCardCon
     approver: {
       duePill: 'Overdue',
       contextLabel: 'VIEW ONLY · APPROVALS · STAGE 2 OF 3',
-      body: "{assignee} hasn't approved the £48,000 budget. Your line is done, this is here so you can see what's holding the request.",
+      body: "{assignee} hasn't approved the £48,000 budget. Your stage is done, this is here so you can see what's holding the request.",
       meta: { personId: 'assignee', caption: 'Due 29 May · 4 days in stage' },
       actions: [],
       linkLabel: 'More details',
@@ -380,7 +380,7 @@ export const ROLE_ACTIVE_CARD: Record<string, Record<UserRole, RoleActiveCardCon
     admin: {
       duePill: 'Overdue',
       contextLabel: 'APPROVALS · STAGE 2 OF 3',
-      body: '{assignee} is 2 days past the 3-day SLA on the £48,000 budget. Legal approval and the purchase order are both blocked behind this line.',
+      body: '{assignee} is 2 days past the 3-day SLA on the £48,000 budget. Legal approval and the purchase order are both blocked behind this stage.',
       meta: { personId: 'assignee', caption: 'Due 29 May · 4 days in stage · SLA 3 days' },
       actions: [
         { label: 'Send reminder', variant: 'dark', kind: 'remind' },
@@ -403,7 +403,7 @@ export const ROLE_ACTIVE_CARD: Record<string, Record<UserRole, RoleActiveCardCon
     },
     approver: {
       duePill: 'Needs your review',
-      contextLabel: 'YOUR LINE · REVIEWS · STAGE 1 OF 2',
+      contextLabel: 'YOUR STAGE · REVIEWS · STAGE 1 OF 2',
       body: 'Alex Green sent this to you once Approvals cleared. Approving here unblocks Finance review and engagement.',
       meta: { personId: 'me', caption: 'Requested 6 Jun · Waiting 0 days' },
       actions: [
@@ -557,8 +557,8 @@ export interface RoleAlsoRunningContent {
 
 export const ROLE_ALSO_RUNNING: Record<UserRole, RoleAlsoRunningContent> = {
   requester: { heading: 'ALSO RUNNING IN THIS PHASE', viewOnly: false },
-  approver: { heading: 'OTHER LINES IN THIS PHASE · VIEW ONLY', viewOnly: true },
-  admin: { heading: 'ALL LINES IN THIS PHASE · YOU CAN OVERRIDE', viewOnly: false },
+  approver: { heading: 'OTHER STAGES IN THIS PHASE · VIEW ONLY', viewOnly: true },
+  admin: { heading: 'ALL STAGES IN THIS PHASE · YOU CAN OVERRIDE', viewOnly: false },
 };
 
 /**
