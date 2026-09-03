@@ -54,9 +54,18 @@ export function WorkflowTimeline() {
           <PhaseRail stages={state.stages} viewedStageId={viewedStage.id} onSelect={setViewedStageId} />
           <AiHint stage={viewedStage} />
         </div>
-        <div className="flex min-w-0 flex-1 flex-col gap-[12px]">
-          <ActiveStageCard stage={viewedStage} step={leadStep} onFocusStep={setFocusedId} />
-          <AlsoRunningCard steps={branchSteps} onFocusStep={setFocusedId} />
+        <div
+          key={`${viewedStage.id}:${leadStep.id}`}
+          className="flex min-w-0 flex-1 flex-col gap-[12px]"
+        >
+          <div className="animate-swap-in flex flex-1">
+            <ActiveStageCard stage={viewedStage} step={leadStep} onFocusStep={setFocusedId} />
+          </div>
+          {branchSteps.length > 0 && (
+            <div className="animate-fade-in">
+              <AlsoRunningCard steps={branchSteps} onFocusStep={setFocusedId} />
+            </div>
+          )}
         </div>
       </div>
     </section>

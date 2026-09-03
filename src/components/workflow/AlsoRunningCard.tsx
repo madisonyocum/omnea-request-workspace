@@ -1,4 +1,4 @@
-import { Ban, Check, ChevronRight, X } from 'lucide-react';
+import { Ban, Check, X } from 'lucide-react';
 import { cn } from '@/lib/cn';
 import { Avatar } from '@/components/ui/Avatar';
 import { Button } from '@/components/ui/Button';
@@ -17,6 +17,7 @@ export function AlsoRunningCard({
   const { state } = useWorkspace();
   const content = ROLE_ALSO_RUNNING[state.role];
 
+
   if (steps.length === 0) return null;
 
   return (
@@ -27,7 +28,7 @@ export function AlsoRunningCard({
         <span className="text-[9px] font-medium text-text-tertiary">{steps.length} stages</span>
       </div>
 
-      {steps.map((step) => {
+      {steps.map((step, index) => {
         const assignee = person(step.assigneeId);
         const isComplete = step.status === 'complete';
         const isDeclined = step.status === 'declined';
@@ -36,8 +37,22 @@ export function AlsoRunningCard({
         return (
           <div
             key={step.id}
+            role="button"
+            tabIndex={0}
+            aria-label={`Open ${step.name}`}
+            onClick={() => onFocusStep(step.id)}
+            onKeyDown={(event) => {
+              if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                onFocusStep(step.id);
+              }
+            }}
+            // Each line lands a beat after the one above it, so the card builds
+            // downwards rather than appearing all at once.
+            style={{ animationDelay: `${60 + index * 45}ms` }}
             className={cn(
-              'flex flex-col gap-[7px] border-t border-border-subtle px-[22px] pb-[14px] pt-[13px]',
+              // The hover fill fades both ways rather than snapping on and off.
+              'animate-swap-in flex cursor-pointer flex-col gap-[7px] border-t border-border-subtle bg-surface-subtle/0 px-[22px] pb-[14px] pt-[13px] transition-[background-color,transform] duration-300 ease-out hover:bg-surface-subtle/100 active:scale-[0.995]',
               resolved && 'opacity-70',
             )}
           >
@@ -87,17 +102,15 @@ export function AlsoRunningCard({
                   </span>
                 )
               )}
-              <Button size="sm" onClick={() => onFocusStep(step.id)}>
+              <Button
+                size="sm"
+                onClick={(event) => {
+                  event.stopPropagation();
+                  onFocusStep(step.id);
+                }}
+              >
                 {resolved || content.viewOnly ? 'View' : step.actions?.includes('reassign') ? 'Reassign' : 'Nudge'}
               </Button>
-              <button
-                type="button"
-                onClick={() => onFocusStep(step.id)}
-                className="flex size-[14px] shrink-0 cursor-pointer items-center justify-center text-text-tertiary"
-                aria-label={`Open ${step.name}`}
-              >
-                <ChevronRight className="size-[14px]" strokeWidth={1.8} />
-              </button>
             </div>
             {!resolved && step.lineMeta && (
               <p className="pl-[20px] text-[10px] text-text-tertiary">{step.lineMeta}</p>

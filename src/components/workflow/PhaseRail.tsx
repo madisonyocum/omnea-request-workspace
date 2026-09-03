@@ -27,17 +27,24 @@ export function PhaseRail({
             type="button"
             onClick={() => onSelect(stage.id)}
             className={cn(
-              'flex cursor-pointer items-center gap-[12px] rounded-[10px] px-[16px] py-[9px] text-left transition-colors duration-120',
+              'flex cursor-pointer items-center gap-[12px] rounded-[10px] px-[16px] py-[9px] text-left transition-all duration-150 active:scale-[0.98]',
               viewed ? 'bg-surface-brand-tint' : 'hover:bg-surface-sunken',
             )}
           >
             {stage.status === 'complete' ? (
-              <Check className="size-[16px] shrink-0 text-success-500" strokeWidth={2.4} />
+              <Check
+                className={cn(
+                  'size-[16px] shrink-0 text-success-500 transition-transform duration-200',
+                  viewed && 'scale-110',
+                )}
+                strokeWidth={2.4}
+              />
             ) : (
               <span
                 className={cn(
-                  'size-[9px] shrink-0 rounded-full',
+                  'size-[9px] shrink-0 rounded-full transition-transform duration-200',
                   stage.status === 'current' ? accent.dot : 'bg-text-disabled',
+                  viewed && 'scale-125',
                 )}
               />
             )}

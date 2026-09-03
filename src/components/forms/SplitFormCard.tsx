@@ -32,7 +32,7 @@ const DOT_TONE: Record<SectionStatusTone, string> = {
 
 /**
  * The two-column form shell shared by My tasks, Intake and Submissions:
- * a 271px section list on the left, the form body on the right.
+ * a 300px section list on the left, the form body on the right.
  */
 export function SplitFormCard({
   groups,
@@ -53,7 +53,7 @@ export function SplitFormCard({
   return (
     <div className="flex h-full min-h-0 items-stretch overflow-hidden rounded-lg border border-border-card bg-surface-card">
       <nav
-        className="scrollbar-slim flex w-[271px] shrink-0 flex-col overflow-y-auto border-r border-border-default"
+        className="scrollbar-slim flex w-[300px] shrink-0 flex-col overflow-y-auto border-r border-border-default"
         aria-label="Form sections"
       >
         {groups.map((group) => (

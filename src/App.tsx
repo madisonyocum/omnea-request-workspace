@@ -27,7 +27,7 @@ export default function App() {
  * its own panes rather than moving the page.
  */
 function RequestWorkspace() {
-  const { dispatch } = useWorkspace();
+  const { state, dispatch } = useWorkspace();
   // No welcome screen — the role-switch hint carries the orientation on its own.
   const [showRoleHint, setShowRoleHint] = useState(true);
 
@@ -43,7 +43,8 @@ function RequestWorkspace() {
         </div>
 
         <main className="min-h-0 min-w-0 flex-1 overflow-hidden px-[24px] py-[14px]">
-          <div className="h-full min-h-0">
+          {/* Keyed on the tab so the pane replays its entrance on every switch. */}
+          <div key={state.activeTab} className="animate-swap-in h-full min-h-0">
             <ActiveView />
           </div>
         </main>

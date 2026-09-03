@@ -25,8 +25,10 @@ export function AiHint({ stage }: { stage: WorkflowStage }) {
   const { state, dispatch } = useWorkspace();
   const [expanded, setExpanded] = useState(false);
 
+  // Only the phase that is actually running has anything worth advising on:
+  // finished phases are history, and phases that have not started have no data.
   const copy = AI_HINTS[state.role][stage.id];
-  if (!copy) return null;
+  if (!copy || stage.status !== 'current') return null;
 
   // The step this phase is actually sitting on, falling back to its lead line.
   const openStep = stage.steps.find((step) => step.status !== 'complete') ?? stage.steps[0];
